@@ -1,6 +1,6 @@
 # OmniConvert — Test Execution Results
 **Date:** 2026-09-15 | **Target:** OmniConvert FastAPI + Vanilla JS App
-**Overall Status:** ✅ PASSED (140/140 Passed — 100.0%)
+**Overall Status:** ❌ FAILED (139/140 Passed — 99.3%)
 **P0 Blocker Pass Rate:** 49/49 (100.0%)
 
 ## Summary Matrix
@@ -10,7 +10,7 @@
 | API Contract | 18 | 18 | 0 | 100.0% |
 | Archive Converter | 6 | 6 | 0 | 100.0% |
 | Audio Converter | 7 | 7 | 0 | 100.0% |
-| Data Converter | 13 | 13 | 0 | 100.0% |
+| Data Converter | 13 | 12 | 1 | 92.3% |
 | Doc Converter | 15 | 15 | 0 | 100.0% |
 | Edge Cases | 20 | 20 | 0 | 100.0% |
 | Image Converter | 14 | 14 | 0 | 100.0% |
@@ -79,7 +79,7 @@
 | DATA-06 | Data Converter | JSON -> CSV | P0 | ✅ PASSED | CSV with header row generated from JSON |
 | DATA-07 | Data Converter | CSV -> TSV | P1 | ✅ PASSED | Tab-separated TSV generated |
 | DATA-08 | Data Converter | JSON -> SQL (INSERT) | P0 | ✅ PASSED | Valid SQL INSERT statements generated with table_name option |
-| DATA-09 | Data Converter | Base64 encode/decode round-trip | P1 | ✅ PASSED | Byte-for-byte identical after round-trip |
+| DATA-09 | Data Converter | Base64 encode/decode round-trip | P1 | ❌ FAILED | Round-trip got: b'{"detail":"string argument should contain only ASCII characters"}' |
 | DATA-10 | Data Converter | Malformed JSON upload | P0 | ✅ PASSED | Graceful 400 error on invalid JSON |
 | DATA-11 | Data Converter | Malformed YAML | P2 | ✅ PASSED | Handled gracefully with status 400 |
 | DATA-12 | Data Converter | Deeply nested JSON | P0 | ✅ PASSED | Nested JSON handled without crash |
@@ -125,8 +125,8 @@
 | SEC-26 | Security | LocalStorage data audit | P2 | ✅ PASSED | Only UI theme string ('omni_theme') stored in localStorage |
 | SEC-27 | Security | Static file directory traversal | P0 | ✅ PASSED | Directory traversal out of /static/ blocked |
 | SEC-28 | Security | HTTP security headers audit | P2 | ✅ PASSED | X-Frame-Options: SAMEORIGIN present |
-| LOAD-01 | Load & Performance | Concurrent conversions - moderate (20 concurrent) | P0 | ✅ PASSED | 20/20 requests completed in 0.36s |
-| LOAD-02 | Load & Performance | Concurrent conversions - high (50 concurrent) | P1 | ✅ PASSED | 50/50 requests completed in 0.71s |
+| LOAD-01 | Load & Performance | Concurrent conversions - moderate (20 concurrent) | P0 | ✅ PASSED | 20/20 requests completed in 0.24s |
+| LOAD-02 | Load & Performance | Concurrent conversions - high (50 concurrent) | P1 | ✅ PASSED | 50/50 requests completed in 0.57s |
 | LOAD-03 | Load & Performance | Sustained load check | P1 | ✅ PASSED | Memory RSS bounded; all temp buffers cleaned up in memory |
 | LOAD-04 | Load & Performance | Large image conversion (2000x2000) | P1 | ✅ PASSED | Converted 2000x2000 PNG to JPG (63130 bytes) |
 | LOAD-05 | Load & Performance | Large document conversion | P1 | ✅ PASSED | Large text conversion SLA met under 1 second |

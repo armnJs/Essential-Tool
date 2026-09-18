@@ -38,7 +38,7 @@ async def add_security_headers(request: Request, call_next):
     response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
     response.headers["Pragma"] = "no-cache"
     response.headers["Expires"] = "0"
-    response.headers["X-OmniConvert-Provenance"] = f"OmniConvert (Armaan) {text_to_zerowidth(PROVENANCE_PAYLOAD)}"
+    response.headers["X-OmniConvert-Provenance"] = f"OmniConvert ({PROVENANCE_PAYLOAD.split('|')[0].split(':')[1].strip()})"
     return response
 
 # Ensure static directory exists

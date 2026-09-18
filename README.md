@@ -38,6 +38,8 @@ graph TD
     Watermark -->|Streaming Binary Blob| Client
 ```
 
+For complete file layout and architecture breakdown, see [FILE_STRUCTURE.md](file:///d:/Armaan/Essential%20tool/FILE_STRUCTURE.md) and [PROJECT_FLOW.md](file:///d:/Armaan/Essential%20tool/PROJECT_FLOW.md).
+
 ---
 
 ## 🚀 Quickstart

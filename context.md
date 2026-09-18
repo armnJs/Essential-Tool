@@ -75,6 +75,8 @@ graph TD
 
 | Directory / File | Description |
 | --- | --- |
+| [FILE_STRUCTURE.md](file:///d:/Armaan/Essential%20tool/FILE_STRUCTURE.md) | Complete directory and module reference blueprint detailing layout, component roles, and system flow. |
+| [docs/](file:///d:/Armaan/Essential%20tool/docs) | Dedicated documentation folder containing implementation plans, provenance design notes, and walkthrough reports. |
 | [server.py](file:///d:/Armaan/Essential%20tool/server.py) | Application entry point. Mounts FastAPI app, configures CORS, static asset handling, routes API requests, and provides fallback 404 handlers. |
 | [converters/registry.py](file:///d:/Armaan/Essential%20tool/converters/registry.py) | Central registry maintaining format catalogs, allowed target conversion matrix, file extension normalizers, and main conversion router. |
 | [converters/image_converter.py](file:///d:/Armaan/Essential%20tool/converters/image_converter.py) | Image transformation module supporting PNG, JPG, WEBP, GIF, SVG, BMP, ICO, TIFF, AVIF, resizing, quality compression, and grayscale filters. |
