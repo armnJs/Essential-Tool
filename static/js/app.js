@@ -40,8 +40,10 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   function updateThemeIcon(theme) {
-    if (themeIcon) {
-      themeIcon.setAttribute("data-feather", theme === "dark" ? "sun" : "moon");
+    const box = document.getElementById("themeIconBox") || themeToggleBtn;
+    if (box) {
+      const iconName = theme === "dark" ? "sun" : "moon";
+      box.innerHTML = `<i data-feather="${iconName}"></i>`;
       feather.replace();
     }
   }
@@ -499,20 +501,24 @@ document.addEventListener("DOMContentLoaded", () => {
       const isOpening = !floatingWin.classList.contains("active");
 
       if (isOpening) {
+        floatingWin.style.display = "flex";
+        // Force reflow for smooth CSS transition
+        void floatingWin.offsetWidth;
         floatingWin.classList.add("active");
         floatingWin.classList.remove("minimized");
         
-        // Reset window position to clean bottom-right default if off-screen
-        const rect = floatingWin.getBoundingClientRect();
-        if (rect.top < 0 || rect.left < 0 || rect.top > window.innerHeight || rect.left > window.innerWidth) {
+        // Reset window position to clean bottom-right default if not manually placed
+        if (!floatingWin.style.left || floatingWin.style.left === "auto") {
           floatingWin.style.right = "2rem";
           floatingWin.style.bottom = "5.5rem";
           floatingWin.style.left = "auto";
           floatingWin.style.top = "auto";
         }
 
-        if (minimizeIcon) minimizeIcon.setAttribute("data-feather", "minus");
-        feather.replace();
+        if (minimizeBtn) {
+          minimizeBtn.innerHTML = '<i data-feather="minus" id="floatingMinimizeIcon"></i>';
+          feather.replace();
+        }
 
         // Sync file from main converter if available
         if (currentFile && !floatingFile) {
@@ -520,6 +526,11 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       } else {
         floatingWin.classList.remove("active");
+        setTimeout(() => {
+          if (!floatingWin.classList.contains("active")) {
+            floatingWin.style.display = "none";
+          }
+        }, 300);
       }
     }
 

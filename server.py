@@ -153,6 +153,14 @@ def index_page():
     return HTMLResponse("<h1>OmniConvert Server Running</h1>")
 
 
+@app.get("/neumorphism", response_class=HTMLResponse)
+def neumorphism_page():
+    path_neu = os.path.join(STATIC_DIR, "neumorphism.html")
+    if os.path.exists(path_neu):
+        return FileResponse(path_neu)
+    return HTMLResponse("<h1>Neumorphic Showcase</h1>")
+
+
 @app.get("/404", response_class=HTMLResponse)
 def page_not_found_explicit():
     path_404 = os.path.join(STATIC_DIR, "404.html")

@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OmniConvert — Minimalist Neumorphic UI Showcase</title>
+  <meta name="description" content="A live interactive example of ultra-clean minimalist Neumorphic (Soft UI) web application design built with Vanilla HTML5, CSS3, and JavaScript.">
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <!-- Feather Icons -->
+  <script src="https://unpkg.com/feather-icons"></script>
+  
+  <style>
+    /* ==========================================================================
+       Minimalist Neumorphic (Soft UI) Design System
+       ========================================================================== */
+    :root {
+      /* Neumorphic Dark Palette */
+      --neu-bg: #1e222e;
+      --neu-card-bg: #1e222e;
+      --neu-shadow-outset-1: #14171f;
+      --neu-shadow-outset-2: #282d3d;
+      --neu-shadow-inset-1: #14171f;
+      --neu-shadow-inset-2: #282d3d;
+      
+      --accent-primary: #6366f1;
+      --accent-hover: #4f46e5;
+      --accent-emerald: #10b981;
+      --accent-glow: rgba(99, 102, 241, 0.4);
+      
+      --text-primary: #e2e8f0;
+      --text-secondary: #94a3b8;
+      --text-muted: #64748b;
+      
+      --font-sans: 'Outfit', 'Inter', -apple-system, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+      
+      --radius-sm: 12px;
+      --radius-md: 20px;
+      --radius-lg: 28px;
+      --radius-pill: 50px;
+    }
+
+    [data-theme="light"] {
+      /* Neumorphic Light Palette */
+      --neu-bg: #e6ecf5;
+      --neu-card-bg: #e6ecf5;
+      --neu-shadow-outset-1: #c3cbda;
+      --neu-shadow-outset-2: #ffffff;
+      --neu-shadow-inset-1: #c3cbda;
+      --neu-shadow-inset-2: #ffffff;
+      
+      --text-primary: #1e293b;
+      --text-secondary: #475569;
+      --text-muted: #94a3b8;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.25s ease, transform 0.2s ease;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      background-color: var(--neu-bg);
+      color: var(--text-primary);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      padding: 0;
+      line-height: 1.6;
+    }
+
+    /* --------------------------------------------------------------------------
+       Neumorphic Base Utility Classes
+       -------------------------------------------------------------------------- */
+    .neu-outset {
+      background: var(--neu-card-bg);
+      box-shadow: 9px 9px 18px var(--neu-shadow-outset-1),
+                  -9px -9px 18px var(--neu-shadow-outset-2);
+      border-radius: var(--radius-md);
+    }
+
+    .neu-outset-sm {
+      background: var(--neu-card-bg);
+      box-shadow: 5px 5px 10px var(--neu-shadow-outset-1),
+                  -5px -5px 10px var(--neu-shadow-outset-2);
+      border-radius: var(--radius-sm);
+    }
+
+    .neu-inset {
+      background: var(--neu-card-bg);
+      box-shadow: inset 6px 6px 12px var(--neu-shadow-inset-1),
+                  inset -6px -6px 12px var(--neu-shadow-inset-2);
+      border-radius: var(--radius-md);
+    }
+
+    .neu-inset-sm {
+      background: var(--neu-card-bg);
+      box-shadow: inset 4px 4px 8px var(--neu-shadow-inset-1),
+                  inset -4px -4px 8px var(--neu-shadow-inset-2);
+      border-radius: var(--radius-sm);
+    }
+
+    .neu-btn {
+      border: none;
+      outline: none;
+      cursor: pointer;
+      font-family: var(--font-sans);
+      font-weight: 600;
+      color: var(--text-primary);
+      background: var(--neu-card-bg);
+      box-shadow: 6px 6px 12px var(--neu-shadow-outset-1),
+                  -6px -6px 12px var(--neu-shadow-outset-2);
+      border-radius: var(--radius-pill);
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 24px;
+      user-select: none;
+    }
+
+    .neu-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 8px 8px 16px var(--neu-shadow-outset-1),
+                  -8px -8px 16px var(--neu-shadow-outset-2);
+    }
+
+    .neu-btn:active, .neu-btn.active {
+      transform: translateY(0);
+      box-shadow: inset 4px 4px 8px var(--neu-shadow-inset-1),
+                  inset -4px -4px 8px var(--neu-shadow-inset-2);
+      color: var(--accent-primary);
+    }
+
+    .neu-btn-primary {
+      background: var(--accent-primary);
+      color: #ffffff;
+      box-shadow: 6px 6px 16px rgba(99, 102, 241, 0.35),
+                  -4px -4px 12px rgba(255, 255, 255, 0.1);
+    }
+
+    .neu-btn-primary:hover {
+      background: var(--accent-hover);
+      box-shadow: 8px 8px 20px rgba(99, 102, 241, 0.45),
+                  -4px -4px 12px rgba(255, 255, 255, 0.15);
+    }
+
+    .neu-btn-primary:active {
+      box-shadow: inset 4px 4px 8px rgba(0, 0, 0, 0.4),
+                  inset -4px -4px 8px rgba(255, 255, 255, 0.2);
+    }
+
+    /* Navbar */
+    .header {
+      width: 100%;
+      max-width: 1200px;
+      margin: 20px auto 0;
+      padding: 16px 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      text-decoration: none;
+    }
+
+    .brand-icon {
+      width: 42px;
+      height: 42px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: var(--radius-sm);
+      color: var(--accent-primary);
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    /* Container Layout */
+    .container {
+      width: 100%;
+      max-width: 1100px;
+      margin: 40px auto;
+      padding: 0 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 40px;
+    }
+
+    /* Hero Section */
+    .hero {
+      text-align: center;
+      max-width: 750px;
+      margin: 0 auto;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 20px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--accent-primary);
+      border-radius: var(--radius-pill);
+      margin-bottom: 20px;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+
+    .hero h1 {
+      font-size: 2.8rem;
+      font-weight: 800;
+      line-height: 1.2;
+      margin-bottom: 16px;
+      letter-spacing: -0.5px;
+    }
+
+    .hero h1 span {
+      color: var(--accent-primary);
+    }
+
+    .hero p {
+      font-size: 1.15rem;
+      color: var(--text-secondary);
+    }
+
+    /* Main Showcase Grid */
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 32px;
+    }
+
+    @media (max-width: 900px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .card {
+      padding: 32px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .card-title {
+      font-size: 1.3rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .card-title i {
+      color: var(--accent-primary);
+    }
+
+    /* Neumorphic Dropzone */
+    .dropzone {
+      padding: 48px 24px;
+      text-align: center;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+      border: 2px dashed transparent;
+      user-select: none;
+    }
+
+    .dropzone:hover {
+      border-color: var(--accent-primary);
+    }
+
+    .dropzone-icon {
+      width: 72px;
+      height: 72px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      color: var(--accent-primary);
+    }
+
+    /* Format Selection Pills */
+    .pills-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .pill-btn {
+      padding: 10px 20px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      border-radius: var(--radius-pill);
+      cursor: pointer;
+      border: none;
+      outline: none;
+      color: var(--text-secondary);
+    }
+
+    .pill-btn.active {
+      color: var(--accent-primary);
+      box-shadow: inset 4px 4px 8px var(--neu-shadow-inset-1),
+                  inset -4px -4px 8px var(--neu-shadow-inset-2);
+    }
+
+    /* Neumorphic Form Controls */
+    .control-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .control-label {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .neu-input {
+      width: 100%;
+      padding: 14px 20px;
+      border: none;
+      outline: none;
+      font-family: var(--font-sans);
+      font-size: 0.95rem;
+      color: var(--text-primary);
+      background: var(--neu-card-bg);
+      border-radius: var(--radius-sm);
+    }
+
+    /* Neumorphic Range Slider */
+    .neu-slider {
+      -webkit-appearance: none;
+      width: 100%;
+      height: 14px;
+      border-radius: var(--radius-pill);
+      outline: none;
+      background: var(--neu-card-bg);
+      box-shadow: inset 3px 3px 6px var(--neu-shadow-inset-1),
+                  inset -3px -3px 6px var(--neu-shadow-inset-2);
+    }
+
+    .neu-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: var(--neu-card-bg);
+      box-shadow: 4px 4px 8px var(--neu-shadow-outset-1),
+                  -4px -4px 8px var(--neu-shadow-outset-2);
+      cursor: pointer;
+      border: 2px solid var(--accent-primary);
+    }
+
+    /* Neumorphic Toggle Switch */
+    .switch-container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .neu-switch {
+      position: relative;
+      width: 60px;
+      height: 32px;
+      border-radius: var(--radius-pill);
+      cursor: pointer;
+    }
+
+    .neu-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .switch-slider {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      border-radius: var(--radius-pill);
+      background: var(--neu-card-bg);
+      box-shadow: inset 3px 3px 6px var(--neu-shadow-inset-1),
+                  inset -3px -3px 6px var(--neu-shadow-inset-2);
+    }
+
+    .switch-slider::before {
+      content: "";
+      position: absolute;
+      height: 24px;
+      width: 24px;
+      left: 4px;
+      bottom: 4px;
+      border-radius: 50%;
+      background: var(--neu-card-bg);
+      box-shadow: 3px 3px 6px var(--neu-shadow-outset-1),
+                  -3px -3px 6px var(--neu-shadow-outset-2);
+      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    input:checked + .switch-slider::before {
+      transform: translateX(28px);
+      background: var(--accent-primary);
+    }
+
+    /* Results Showcase Card */
+    .result-card {
+      padding: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .result-info {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .result-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--accent-emerald);
+    }
+
+    .footer {
+      text-align: center;
+      margin: 40px auto;
+      padding: 20px;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header / Navbar -->
+  <header class="header neu-outset">
+    <a href="/" class="brand">
+      <div class="brand-icon neu-outset-sm">
+        <i data-feather="repeat"></i>
+      </div>
+      <span>OmniConvert</span>
+    </a>
+    <div class="nav-actions">
+      <a href="/" class="neu-btn">
+        <i data-feather="grid"></i> Standard UI
+      </a>
+      <button class="neu-btn" id="themeToggleBtn">
+        <i data-feather="sun" id="themeIcon"></i> Theme
+      </button>
+    </div>
+  </header>
+
+  <main class="container">
+
+    <!-- Hero Header -->
+    <section class="hero">
+      <div class="hero-badge neu-outset-sm">
+        <i data-feather="sparkles"></i> Soft UI Neumorphic Aesthetic
+      </div>
+      <h1>Minimalist <span>Neumorphism</span> UI</h1>
+      <p>A tactile, clean, and modern Neumorphic (Soft UI) user interface powered by dual directional extruded light and inset shadow physics.</p>
+    </section>
+
+    <!-- Main Converter Showcase Grid -->
+    <div class="grid">
+
+      <!-- Left Column: Converter Dropzone & Controls -->
+      <section class="card neu-outset">
+        <h2 class="card-title">
+          <i data-feather="upload-cloud"></i> Interactive Converter
+        </h2>
+
+        <!-- Dropzone -->
+        <div class="dropzone neu-inset" id="neuDropzone">
+          <div class="dropzone-icon neu-outset-sm">
+            <i data-feather="file-text" style="width: 32px; height: 32px;"></i>
+          </div>
+          <div>
+            <h3 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 4px;">Click or Drag File Here</h3>
+            <p style="font-size: 0.88rem; color: var(--text-secondary);" id="fileStatusText">Supports Images, Documents, Data, Audio & Notebooks</p>
+          </div>
+          <input type="file" id="fileInput" class="hidden">
+        </div>
+
+        <!-- Target Format Selector -->
+        <div class="control-group">
+          <label class="control-label">Target Format</label>
+          <div class="pills-container" id="formatPills">
+            <button class="pill-btn neu-btn active">PDF</button>
+            <button class="pill-btn neu-btn">JPG</button>
+            <button class="pill-btn neu-btn">WEBP</button>
+            <button class="pill-btn neu-btn">DOCX</button>
+            <button class="pill-btn neu-btn">CSV</button>
+            <button class="pill-btn neu-btn">JSON</button>
+          </div>
+        </div>
+
+        <!-- Image Quality Slider -->
+        <div class="control-group">
+          <div class="control-label">
+            <span>Quality Compression</span>
+            <span id="qualityVal">85%</span>
+          </div>
+          <input type="range" class="neu-slider" id="qualitySlider" min="10" max="100" value="85">
+        </div>
+
+        <!-- Convert Action Button -->
+        <button class="neu-btn neu-btn-primary" id="convertBtn" style="justify-content: center; width: 100%; padding: 16px; margin-top: 8px;">
+          <i data-feather="zap"></i> Convert File Now
+        </button>
+      </section>
+
+      <!-- Right Column: Component Showcase & Result -->
+      <section class="card neu-outset">
+        <h2 class="card-title">
+          <i data-feather="sliders"></i> Neumorphic UI Components
+        </h2>
+
+        <!-- Inset Input Field -->
+        <div class="control-group">
+          <label class="control-label">Recessed Text Input</label>
+          <input type="text" class="neu-input neu-inset-sm" placeholder="Enter custom filename or parameter..." value="sample_converted_document">
+        </div>
+
+        <!-- Toggle Switch -->
+        <div class="switch-container neu-outset-sm" style="padding: 16px 20px;">
+          <div>
+            <div style="font-weight: 600;">Grayscale Filter</div>
+            <div style="font-size: 0.85rem; color: var(--text-muted);">Apply monochrome palette conversion</div>
+          </div>
+          <label class="neu-switch">
+            <input type="checkbox" id="grayscaleToggle">
+            <span class="switch-slider"></span>
+          </label>
+        </div>
+
+        <!-- Live Conversion Result Card (Mock Output) -->
+        <div class="control-group" style="margin-top: 12px;">
+          <label class="control-label">Processed Output Stream</label>
+          <div class="result-card neu-inset-sm">
+            <div class="result-info">
+              <div class="result-icon neu-outset-sm">
+                <i data-feather="check-circle"></i>
+              </div>
+              <div>
+                <div style="font-weight: 700; font-size: 0.95rem;">sample_document.pdf</div>
+                <div style="font-size: 0.82rem; color: var(--text-muted);">PDF Document • 42.8 KB</div>
+              </div>
+            </div>
+            <button class="neu-btn" style="padding: 10px 18px; font-size: 0.88rem;">
+              <i data-feather="download"></i> Save
+            </button>
+          </div>
+        </div>
+
+      </section>
+
+    </div>
+
+  </main>
+
+  <footer class="footer">
+    <p>OmniConvert Neumorphic UI Engine • Designed by <strong>Armaan</strong></p>
+  </footer>
+
+  <script>
+    // Initialize Feather Icons
+    feather.replace();
+
+    // Theme Toggle Handler
+    const themeToggleBtn = document.getElementById('themeToggleBtn');
+    const themeIcon = document.getElementById('themeIcon');
+    
+    themeToggleBtn.addEventListener('click', () => {
+      const currentTheme = document.documentElement.getAttribute('data-theme');
+      const nextTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', nextTheme);
+      themeIcon.setAttribute('data-feather', nextTheme === 'dark' ? 'sun' : 'moon');
+      feather.replace();
+    });
+
+    // Slider Value Update
+    const qualitySlider = document.getElementById('qualitySlider');
+    const qualityVal = document.getElementById('qualityVal');
+    qualitySlider.addEventListener('input', (e) => {
+      qualityVal.textContent = e.target.value + '%';
+    });
+
+    // Pill Toggle Handler
+    document.querySelectorAll('.pill-btn').forEach(btn => {
+      btn.addEventListener('click', function() {
+        document.querySelectorAll('.pill-btn').forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+      });
+    });
+
+    // Dropzone Trigger
+    const neuDropzone = document.getElementById('neuDropzone');
+    const fileInput = document.getElementById('fileInput');
+    const fileStatusText = document.getElementById('fileStatusText');
+
+    neuDropzone.addEventListener('click', () => fileInput.click());
+
+    fileInput.addEventListener('change', (e) => {
+      if (e.target.files.length > 0) {
+        const file = e.target.files[0];
+        fileStatusText.textContent = `Selected: ${file.name} (${(file.size / 1024).toFixed(1)} KB)`;
+        fileStatusText.style.color = 'var(--accent-primary)';
+      }
+    });
+  </script>
+</body>
+</html>
