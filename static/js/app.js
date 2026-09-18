@@ -340,8 +340,10 @@ function initApp() {
 
     window.addEventListener("dragenter", (e) => {
       e.preventDefault();
-      dragCounter++;
-      overlay.classList.add("active");
+      if (e.dataTransfer && e.dataTransfer.types && Array.from(e.dataTransfer.types).includes("Files")) {
+        dragCounter++;
+        overlay.classList.add("active");
+      }
     });
 
     window.addEventListener("dragover", (e) => {
@@ -364,9 +366,36 @@ function initApp() {
 
       if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
         const file = e.dataTransfer.files[0];
-        handleFileSelected(file);
-        const mainCard = document.querySelector(".converter-card");
-        if (mainCard) mainCard.scrollIntoView({ behavior: "smooth" });
+        const floatingWin = document.getElementById("floatingWindow");
+        const fabBtn = document.getElementById("floatingFabBtn");
+
+        const clickX = e.clientX;
+        const clickY = e.clientY;
+        let isFloatingTarget = false;
+
+        if (floatingWin && floatingWin.classList.contains("active")) {
+          const rect = floatingWin.getBoundingClientRect();
+          if (clickX >= rect.left - 40 && clickX <= rect.right + 40 &&
+              clickY >= rect.top - 40 && clickY <= rect.bottom + 40) {
+            isFloatingTarget = true;
+          }
+        }
+
+        if (fabBtn) {
+          const fabRect = fabBtn.getBoundingClientRect();
+          if (clickX >= fabRect.left - 40 && clickX <= fabRect.right + 40 &&
+              clickY >= fabRect.top - 40 && clickY <= fabRect.bottom + 40) {
+            isFloatingTarget = true;
+          }
+        }
+
+        if (isFloatingTarget && typeof window.handleFloatingFileGlobal === "function") {
+          window.handleFloatingFileGlobal(file);
+        } else {
+          handleFileSelected(file);
+          const mainCard = document.querySelector(".converter-card");
+          if (mainCard) mainCard.scrollIntoView({ behavior: "smooth" });
+        }
       }
     });
   }
@@ -510,27 +539,69 @@ function initApp() {
       }
     }
 
-    // Floating Drop Zone Event Handling
+    // Global Expose for Floating File handling
+    window.handleFloatingFileGlobal = function(file) {
+      if (!floatingWin) return;
+      if (!floatingWin.classList.contains("active")) {
+        window.toggleFloatingWindow();
+      }
+      floatingWin.classList.remove("minimized");
+      handleFloatingFile(file);
+    };
+
+    // Header click to expand if minimized
+    if (winHeader && floatingWin) {
+      winHeader.addEventListener("click", (e) => {
+        if (e.target.closest(".floating-action-btn")) return;
+        if (floatingWin.classList.contains("minimized")) {
+          floatingWin.classList.remove("minimized");
+          if (minimizeBtn) {
+            minimizeBtn.innerHTML = '<i data-feather="minus" id="floatingMinimizeIcon"></i>';
+            if (typeof feather !== "undefined") feather.replace();
+          }
+        }
+      });
+    }
+
+    // Comprehensive Drag & Drop Event Handling for Floating Window, Dropzone, Panel & FAB
+    const floatDropTargets = [floatingWin, floatingDropzone, floatingPanel, fabBtn];
+    floatDropTargets.forEach(target => {
+      if (!target) return;
+
+      target.addEventListener("dragover", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        if (floatingWin) floatingWin.style.borderColor = "var(--accent-cyan)";
+      });
+
+      target.addEventListener("dragleave", (e) => {
+        e.preventDefault();
+        if (floatingWin) floatingWin.style.borderColor = "var(--accent-primary)";
+      });
+
+      target.addEventListener("drop", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const overlay = document.getElementById("globalDragOverlay");
+        if (overlay) overlay.classList.remove("active");
+
+        if (floatingWin) {
+          floatingWin.style.borderColor = "var(--accent-primary)";
+          floatingWin.classList.remove("minimized");
+          if (!floatingWin.classList.contains("active")) {
+            window.toggleFloatingWindow();
+          }
+        }
+
+        if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+          handleFloatingFile(e.dataTransfer.files[0]);
+        }
+      });
+    });
+
     if (floatingDropzone) {
       floatingDropzone.addEventListener("click", () => {
         if (floatingFileInput) floatingFileInput.click();
-      });
-
-      floatingDropzone.addEventListener("dragover", (e) => {
-        e.preventDefault();
-        floatingDropzone.style.borderColor = "var(--accent-primary)";
-      });
-
-      floatingDropzone.addEventListener("dragleave", () => {
-        floatingDropzone.style.borderColor = "var(--border-color)";
-      });
-
-      floatingDropzone.addEventListener("drop", (e) => {
-        e.preventDefault();
-        floatingDropzone.style.borderColor = "var(--border-color)";
-        if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-          handleFloatingFile(e.dataTransfer.files[0]);
-        }
       });
     }
 

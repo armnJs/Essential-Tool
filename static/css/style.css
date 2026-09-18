@@ -896,6 +896,76 @@ body {
   50% { opacity: 0.4; transform: scale(1.4); }
 }
 
+/* Global Drag & Drop Overlay System */
+.global-drag-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(9, 13, 22, 0.88);
+  backdrop-filter: blur(12px);
+  z-index: 999999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.25s ease, visibility 0.25s ease;
+}
+
+.global-drag-overlay.active {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+.drag-overlay-card {
+  background: var(--bg-secondary);
+  border: 2px dashed var(--accent-primary);
+  border-radius: var(--radius-xl);
+  padding: 3rem 4rem;
+  text-align: center;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6), 0 0 50px rgba(99, 102, 241, 0.3);
+  transform: scale(0.9);
+  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  max-width: 500px;
+  pointer-events: none;
+}
+
+.global-drag-overlay.active .drag-overlay-card {
+  transform: scale(1);
+}
+
+.drag-overlay-icon-ring {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: rgba(99, 102, 241, 0.15);
+  color: var(--accent-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1.5rem auto;
+  animation: pulseRing 2s infinite;
+}
+
+@keyframes pulseRing {
+  0% { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.4); }
+  70% { box-shadow: 0 0 0 20px rgba(99, 102, 241, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0); }
+}
+
+.drag-overlay-card h2 {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+}
+
+.drag-overlay-card p {
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+}
+
 /* Sticky Floating Action Button (FAB) Widget */
 .floating-fab-container {
   position: fixed;
