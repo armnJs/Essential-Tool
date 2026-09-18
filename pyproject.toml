@@ -1,0 +1,37 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "omniconvert"
+version = "1.0.0"
+authors = [
+  { name="Armaan", email="armaan@omniconvert.org" },
+]
+description = "Universal minimalist file converter engine and FastAPI web application"
+readme = "README.md"
+requires-python = ">=3.9"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Topic :: Multimedia :: Graphics :: Graphics Conversion",
+    "Topic :: Text Processing :: Markup",
+]
+dependencies = [
+    "fastapi>=0.100.0",
+    "uvicorn>=0.22.0",
+    "pillow>=10.0.0",
+    "pypdf>=3.10.0",
+    "python-docx>=0.8.11",
+    "reportlab>=4.0.0",
+    "pandas>=2.0.0",
+    "openpyxl>=3.1.0",
+    "pyyaml>=6.0",
+    "markdown>=3.4",
+    "beautifulsoup4>=4.12.0",
+]
+
+[project.urls]
+"Homepage" = "https://github.com/Armaan/OmniConvert"
+"Bug Tracker" = "https://github.com/Armaan/OmniConvert/issues"
