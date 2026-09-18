@@ -9,9 +9,89 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>OmniConvert - Free Universal File Converter</title>
   <meta name="description" content="Convert any file format instantly for free with OmniConvert. Minimalist UI supporting PDF, DOCX, Images, Data, Audio, Archives, and Code.">
-  <link rel="stylesheet" href="/static/css/style.css?v=2.0">
+  <link rel="stylesheet" href="/static/css/style.css?v=4.0">
   <!-- Feather Icons -->
   <script src="https://unpkg.com/feather-icons"></script>
+  <style>
+    /* Guaranteed Inline Theme Overrides */
+    html[data-theme="light"], html[data-theme="light"] body {
+      background-color: #f1f5f9 !important;
+      color: #0f172a !important;
+    }
+    html[data-theme="light"] .bg-mesh {
+      opacity: 0.25 !important;
+    }
+    html[data-theme="light"] .navbar,
+    html[data-theme="light"] .converter-card,
+    html[data-theme="light"] .category-card,
+    html[data-theme="light"] .floating-window {
+      background: rgba(255, 255, 255, 0.96) !important;
+      border-color: rgba(15, 23, 42, 0.15) !important;
+      color: #0f172a !important;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08) !important;
+    }
+    html[data-theme="light"] .hero h1 {
+      background: linear-gradient(135deg, #0f172a 30%, #334155) !important;
+      -webkit-background-clip: text !important;
+      -webkit-text-fill-color: transparent !important;
+    }
+    html[data-theme="light"] .hero p,
+    html[data-theme="light"] .dropzone p,
+    html[data-theme="light"] .file-meta,
+    html[data-theme="light"] .floating-title span {
+      color: #334155 !important;
+    }
+    html[data-theme="light"] .dropzone h3,
+    html[data-theme="light"] .file-name,
+    html[data-theme="light"] .control-label,
+    html[data-theme="light"] .category-header h4 {
+      color: #0f172a !important;
+    }
+    html[data-theme="light"] .dropzone {
+      background: rgba(241, 245, 249, 0.6) !important;
+      border-color: rgba(99, 102, 241, 0.4) !important;
+    }
+
+    /* Guaranteed Floating Window Display */
+    #floatingWindow.active {
+      display: flex !important;
+      opacity: 1 !important;
+      visibility: visible !important;
+      pointer-events: auto !important;
+      transform: translateY(0) scale(1) !important;
+    }
+  </style>
+  <script>
+    function toggleTheme() {
+      var cur = document.documentElement.getAttribute("data-theme") || "dark";
+      var next = cur === "dark" ? "light" : "dark";
+      document.documentElement.setAttribute("data-theme", next);
+      localStorage.setItem("omni_theme", next);
+      var box = document.getElementById("themeIconBox");
+      if (box) {
+        box.innerHTML = '<i data-feather="' + (next === 'dark' ? 'sun' : 'moon') + '"></i>';
+        if (typeof feather !== "undefined") feather.replace();
+      }
+    }
+
+    function toggleFloatingWindow() {
+      var win = document.getElementById("floatingWindow");
+      if (!win) return;
+      var isActive = win.classList.contains("active");
+      if (isActive) {
+        win.classList.remove("active");
+        win.style.display = "none";
+      } else {
+        win.style.top = "auto";
+        win.style.left = "auto";
+        win.style.right = "2rem";
+        win.style.bottom = "5.5rem";
+        win.style.display = "flex";
+        win.classList.add("active");
+        win.classList.remove("minimized");
+      }
+    }
+  </script>
 </head>
 <body>
   <div class="bg-mesh"></div>
@@ -41,13 +121,13 @@
       <a href="/neumorphism" class="nav-btn" title="View Minimalist Neumorphic UI Showcase">
         <i data-feather="box"></i> Neumorphic UI
       </a>
-      <button class="nav-btn" id="openFloatingWinBtn" title="Open Floating Converter Assistant">
+      <button class="nav-btn" id="openFloatingWinBtn" onclick="toggleFloatingWindow()" title="Open Floating Converter Assistant">
         <i data-feather="layers"></i> Floating Mode
       </button>
       <a href="/404" class="nav-btn" title="View Custom 404 Page">
         <i data-feather="help-circle"></i> 404 Demo
       </a>
-      <button class="theme-toggle-btn" id="themeToggleBtn" title="Toggle Light/Dark Theme">
+      <button class="theme-toggle-btn" id="themeToggleBtn" onclick="toggleTheme()" title="Toggle Light/Dark Theme">
         <span id="themeIconBox"><i data-feather="moon"></i></span>
       </button>
     </div>
@@ -240,7 +320,7 @@
 
   <!-- Sticky Floating Action Button (FAB) -->
   <div class="floating-fab-container" id="floatingFabContainer">
-    <button class="floating-fab-btn" id="floatingFabBtn" title="Toggle Quick Converter Floating Window">
+    <button class="floating-fab-btn" id="floatingFabBtn" onclick="toggleFloatingWindow()" title="Toggle Quick Converter Floating Window">
       <i data-feather="zap"></i>
       <span>Quick Convert</span>
       <span class="fab-pulse"></span>
@@ -312,9 +392,11 @@
     <p>OmniConvert &copy; 2026 • Free Universal File Format Converter • Built for Personal & Developer Usage</p>
   </footer>
 
-  <script src="/static/js/app.js?v=2.0"></script>
+  <script src="/static/js/app.js?v=5.0"></script>
   <script>
-    feather.replace();
+    if (typeof feather !== "undefined") {
+      feather.replace();
+    }
   </script>
 </body>
 </html>
