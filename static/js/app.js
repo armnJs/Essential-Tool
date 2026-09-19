@@ -62,7 +62,7 @@ function initApp() {
   // Drag & Drop Events for Main Dropzone
   if (dropzone) {
     dropzone.addEventListener("click", (e) => {
-      if (e.target.closest("#fileInput") || e.target.closest("#removeFileBtn")) return;
+      if (e.target.closest("#fileInput") || e.target.closest("#removeFileBtn") || e.target.closest(".browse-btn")) return;
       if (fileInput) fileInput.click();
     });
 
@@ -603,7 +603,7 @@ function initApp() {
 
     if (floatingDropzone) {
       floatingDropzone.addEventListener("click", (e) => {
-        if (e.target.closest("#floatingFileInput") || e.target.closest("#floatingRemoveFileBtn")) return;
+        if (e.target.closest("#floatingFileInput") || e.target.closest("#floatingRemoveFileBtn") || e.target.closest(".browse-btn")) return;
         if (floatingFileInput) floatingFileInput.click();
       });
     }

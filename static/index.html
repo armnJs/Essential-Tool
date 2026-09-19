@@ -9,7 +9,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>OmniConvert - Free Universal File Converter</title>
   <meta name="description" content="Convert any file format instantly for free with OmniConvert. Minimalist UI supporting PDF, DOCX, Images, Data, Audio, Archives, and Code.">
-  <link rel="stylesheet" href="/static/css/style.css?v=7.0">
+  <link rel="stylesheet" href="/static/css/style.css?v=8.0">
   <!-- Feather Icons -->
   <script src="https://unpkg.com/feather-icons"></script>
   <style>
@@ -149,7 +149,10 @@
           <i data-feather="upload-cloud" style="width: 32px; height: 32px;"></i>
         </div>
         <h3 id="dropzoneTitle">Drag & Drop your file here</h3>
-        <p id="dropzoneSubtitle">or click to browse from your computer</p>
+        <p id="dropzoneSubtitle">or choose a file from your computer</p>
+        <label for="fileInput" class="browse-btn" id="browseBtn">
+          <i data-feather="folder"></i> Browse Files
+        </label>
         <div class="drag-quote-badge" id="dragQuoteBadge" style="display: none;">
           🔥 Drop it like a hot pan!
         </div>
@@ -165,7 +168,7 @@
           <span class="tag">MP3</span>
           <span class="tag">ZIP</span>
         </div>
-        <input type="file" id="fileInput">
+        <input type="file" id="fileInput" style="display: none;">
       </div>
 
 
@@ -347,8 +350,11 @@
       <!-- Drop zone in floating window -->
       <div class="floating-dropzone" id="floatingDropzone">
         <i data-feather="upload-cloud" style="width: 28px; height: 28px; color: var(--accent-primary);"></i>
-        <p>Drop file or <span>browse</span></p>
-        <input type="file" id="floatingFileInput">
+        <p>Drop file here or click below</p>
+        <label for="floatingFileInput" class="browse-btn compact" id="floatingBrowseBtn">
+          <i data-feather="folder" style="width: 14px; height: 14px;"></i> Browse Files
+        </label>
+        <input type="file" id="floatingFileInput" style="display: none;">
       </div>
 
       <!-- Floating conversion panel -->
@@ -392,7 +398,7 @@
     <p>OmniConvert &copy; 2026 • Free Universal File Format Converter • Built for Personal & Developer Usage</p>
   </footer>
 
-  <script src="/static/js/app.js?v=7.0"></script>
+  <script src="/static/js/app.js?v=8.0"></script>
   <script>
     if (typeof feather !== "undefined") {
       feather.replace();
