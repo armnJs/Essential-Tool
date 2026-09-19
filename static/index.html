@@ -9,7 +9,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>OmniConvert - Free Universal File Converter</title>
   <meta name="description" content="Convert any file format instantly for free with OmniConvert. Minimalist UI supporting PDF, DOCX, Images, Data, Audio, Archives, and Code.">
-  <link rel="stylesheet" href="/static/css/style.css?v=8.0">
+  <link rel="stylesheet" href="/static/css/style.css?v=9.0">
   <!-- Feather Icons -->
   <script src="https://unpkg.com/feather-icons"></script>
   <style>
@@ -121,9 +121,6 @@
       <a href="/neumorphism" class="nav-btn" title="View Minimalist Neumorphic UI Showcase">
         <i data-feather="box"></i> Neumorphic UI
       </a>
-      <button class="nav-btn" id="openFloatingWinBtn" onclick="toggleFloatingWindow()" title="Open Floating Converter Assistant">
-        <i data-feather="layers"></i> Floating Mode
-      </button>
       <a href="/404" class="nav-btn" title="View Custom 404 Page">
         <i data-feather="help-circle"></i> 404 Demo
       </a>
@@ -321,7 +318,8 @@
     </section>
   </main>
 
-  <!-- Sticky Floating Action Button (FAB) -->
+  <!-- Sticky Floating Action Button & Mini Window (Completely Disabled / Commented out per user directive) -->
+  <!--
   <div class="floating-fab-container" id="floatingFabContainer">
     <button class="floating-fab-btn" id="floatingFabBtn" onclick="toggleFloatingWindow()" title="Toggle Quick Converter Floating Window">
       <i data-feather="zap"></i>
@@ -330,7 +328,6 @@
     </button>
   </div>
 
-  <!-- Draggable Floating Mini Converter Window -->
   <div class="floating-window" id="floatingWindow">
     <div class="floating-window-header" id="floatingWindowHeader">
       <div class="floating-title">
@@ -347,7 +344,6 @@
       </div>
     </div>
     <div class="floating-window-body" id="floatingWindowBody">
-      <!-- Drop zone in floating window -->
       <div class="floating-dropzone" id="floatingDropzone">
         <i data-feather="upload-cloud" style="width: 28px; height: 28px; color: var(--accent-primary);"></i>
         <p>Drop file here or click below</p>
@@ -357,7 +353,6 @@
         <input type="file" id="floatingFileInput" style="display: none;">
       </div>
 
-      <!-- Floating conversion panel -->
       <div class="floating-panel" id="floatingPanel" style="display: none;">
         <div class="floating-file-info">
           <div class="file-icon-badge" id="floatingFileBadge">FILE</div>
@@ -392,13 +387,14 @@
       </div>
     </div>
   </div>
+  -->
 
   <!-- Footer -->
   <footer class="footer">
     <p>OmniConvert &copy; 2026 • Free Universal File Format Converter • Built for Personal & Developer Usage</p>
   </footer>
 
-  <script src="/static/js/app.js?v=8.0"></script>
+  <script src="/static/js/app.js?v=9.0"></script>
   <script>
     if (typeof feather !== "undefined") {
       feather.replace();
