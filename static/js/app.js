@@ -61,7 +61,8 @@ function initApp() {
 
   // Drag & Drop Events for Main Dropzone
   if (dropzone) {
-    dropzone.addEventListener("click", () => {
+    dropzone.addEventListener("click", (e) => {
+      if (e.target.closest("#fileInput") || e.target.closest("#removeFileBtn")) return;
       if (fileInput) fileInput.click();
     });
 
@@ -95,6 +96,7 @@ function initApp() {
   }
 
   if (fileInput) {
+    fileInput.addEventListener("click", (e) => e.stopPropagation());
     fileInput.addEventListener("change", (e) => {
       if (e.target.files && e.target.files.length > 0) {
         handleFileSelected(e.target.files[0]);
@@ -168,7 +170,7 @@ function initApp() {
         btn.className = `format-pill ${index === 0 ? 'active' : ''}`;
         btn.textContent = fmt;
         btn.addEventListener("click", () => {
-          document.querySelectorAll(".format-pill").forEach(p => p.classList.remove("active"));
+          formatPills.querySelectorAll(".format-pill").forEach(p => p.classList.remove("active"));
           btn.classList.add("active");
           selectedTargetFormat = fmt;
           updateOptionsVisibility(fmt);
@@ -195,7 +197,7 @@ function initApp() {
       btn.className = `format-pill ${index === 0 ? 'active' : ''}`;
       btn.textContent = fmt;
       btn.addEventListener("click", () => {
-        document.querySelectorAll(".format-pill").forEach(p => p.classList.remove("active"));
+        formatPills.querySelectorAll(".format-pill").forEach(p => p.classList.remove("active"));
         btn.classList.add("active");
         selectedTargetFormat = fmt;
         updateOptionsVisibility(fmt);
@@ -600,12 +602,14 @@ function initApp() {
     });
 
     if (floatingDropzone) {
-      floatingDropzone.addEventListener("click", () => {
+      floatingDropzone.addEventListener("click", (e) => {
+        if (e.target.closest("#floatingFileInput") || e.target.closest("#floatingRemoveFileBtn")) return;
         if (floatingFileInput) floatingFileInput.click();
       });
     }
 
     if (floatingFileInput) {
+      floatingFileInput.addEventListener("click", (e) => e.stopPropagation());
       floatingFileInput.addEventListener("change", (e) => {
         if (e.target.files && e.target.files.length > 0) {
           handleFloatingFile(e.target.files[0]);
@@ -686,10 +690,11 @@ function initApp() {
         if (floatingProgressContainer) floatingProgressContainer.style.display = "block";
         if (floatingProgressBarFill) floatingProgressBarFill.style.width = "40%";
 
+        const optionsPayload = buildOptionsPayload(floatingTargetFmt);
         const formData = new FormData();
         formData.append("file", floatingFile);
         formData.append("target_format", floatingTargetFmt);
-        formData.append("options", JSON.stringify({}));
+        formData.append("options", JSON.stringify(optionsPayload));
 
         try {
           if (floatingProgressBarFill) floatingProgressBarFill.style.width = "75%";
@@ -701,7 +706,10 @@ function initApp() {
 
           if (floatingProgressBarFill) floatingProgressBarFill.style.width = "95%";
 
-          if (!response.ok) throw new Error("Conversion failed");
+          if (!response.ok) {
+            const errData = await response.json().catch(() => ({ detail: "Conversion failed" }));
+            throw new Error(errData.detail || "Conversion error occurred");
+          }
 
           const blob = await response.blob();
           if (floatingProgressBarFill) floatingProgressBarFill.style.width = "100%";
@@ -720,7 +728,7 @@ function initApp() {
             floatingDownloadBtn.href = floatingDownloadUrl;
             floatingDownloadBtn.download = outName;
           }
-          if (floatingResultMeta) floatingResultMeta.textContent = `Ready! (${formatBytes(blob.size)})`;
+          if (floatingResultMeta) floatingResultMeta.textContent = `Ready! (${formatBytes(blob.size)}) - ${outName}`;
           if (floatingResultCard) floatingResultCard.style.display = "block";
 
         } catch (err) {
@@ -733,6 +741,9 @@ function initApp() {
             if (floatingProgressContainer) floatingProgressContainer.style.display = "none";
             if (floatingProgressBarFill) floatingProgressBarFill.style.width = "0%";
           }, 1000);
+        }
+      });
+    }
   }
 }
 
