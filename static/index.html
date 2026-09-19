@@ -9,7 +9,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>OmniConvert - Free Universal File Converter</title>
   <meta name="description" content="Convert any file format instantly for free with OmniConvert. Minimalist UI supporting PDF, DOCX, Images, Data, Audio, Archives, and Code.">
-  <link rel="stylesheet" href="/static/css/style.css?v=9.0">
+  <link rel="stylesheet" href="/static/css/style.css?v=10.0">
   <!-- Feather Icons -->
   <script src="https://unpkg.com/feather-icons"></script>
   <style>
@@ -134,25 +134,29 @@
   <main class="container">
     <!-- Hero Header -->
     <section class="hero">
-      <h1>Universal <span>File Converter</span></h1>
-      <p>Convert any document, image, audio, data sheet, or archive format instantly. 100% Free & Private.</p>
+      <div class="hero-badge"><i data-feather="sparkles"></i> Universal File Conversion Suite</div>
+      <h1>Every File Tool You Need <span>In One Place</span></h1>
+      <p>Convert PDF, DOCX, Images, Data, Audio & Code. Drag & drop files from any desktop window or tab.</p>
     </section>
 
-    <!-- Main Converter Card -->
+    <!-- Main Converter Card (iLovePDF Inspired High-Contrast CTA) -->
     <div class="converter-card">
       <!-- Drag & Drop Zone -->
       <div class="dropzone" id="dropzone">
         <div class="dropzone-icon">
-          <i data-feather="upload-cloud" style="width: 32px; height: 32px;"></i>
+          <i data-feather="upload-cloud" style="width: 44px; height: 44px;"></i>
         </div>
-        <h3 id="dropzoneTitle">Drag & Drop your file here</h3>
-        <p id="dropzoneSubtitle">or choose a file from your computer</p>
-        <label for="fileInput" class="browse-btn" id="browseBtn">
-          <i data-feather="folder"></i> Browse Files
+        <h3 id="dropzoneTitle">Select file or drop here</h3>
+        <p id="dropzoneSubtitle">Fast, private & 100% free universal file converter</p>
+
+        <label for="fileInput" class="browse-btn hero-select-btn" id="browseBtn">
+          <i data-feather="folder-plus"></i> Select File
         </label>
+        
         <div class="drag-quote-badge" id="dragQuoteBadge" style="display: none;">
-          🔥 Drop it like a hot pan!
+          🔥 Drop it anywhere on screen!
         </div>
+
         <div class="dropzone-tags">
           <span class="tag">PDF</span>
           <span class="tag">DOCX</span>
@@ -394,7 +398,7 @@
     <p>OmniConvert &copy; 2026 • Free Universal File Format Converter • Built for Personal & Developer Usage</p>
   </footer>
 
-  <script src="/static/js/app.js?v=9.0"></script>
+  <script src="/static/js/app.js?v=10.0"></script>
   <script>
     if (typeof feather !== "undefined") {
       feather.replace();

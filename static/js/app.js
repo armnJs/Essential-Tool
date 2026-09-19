@@ -332,7 +332,7 @@ function initApp() {
     return opts;
   }
 
-  // Global Drag & Drop Overlay
+  // Global Drag & Drop Overlay System (Supports dragging files from any desktop tab, window, or file manager)
   initGlobalDragOverlay();
   function initGlobalDragOverlay() {
     const overlay = document.getElementById("globalDragOverlay");
@@ -340,16 +340,27 @@ function initApp() {
 
     let dragCounter = 0;
 
+    function isFileDrag(e) {
+      if (!e || !e.dataTransfer) return false;
+      if (e.dataTransfer.types) {
+        const types = Array.from(e.dataTransfer.types);
+        return types.includes("Files") || types.includes("application/x-moz-file") || types.includes("text/uri-list") || types.includes("DownloadURL");
+      }
+      return true;
+    }
+
     window.addEventListener("dragenter", (e) => {
       e.preventDefault();
-      if (e.dataTransfer && e.dataTransfer.types && Array.from(e.dataTransfer.types).includes("Files")) {
+      if (isFileDrag(e)) {
         dragCounter++;
         overlay.classList.add("active");
+        if (e.dataTransfer) e.dataTransfer.dropEffect = "copy";
       }
     });
 
     window.addEventListener("dragover", (e) => {
       e.preventDefault();
+      if (e.dataTransfer) e.dataTransfer.dropEffect = "copy";
     });
 
     window.addEventListener("dragleave", (e) => {
@@ -361,39 +372,23 @@ function initApp() {
       }
     });
 
-    overlay.addEventListener("drop", (e) => {
+    window.addEventListener("drop", (e) => {
       e.preventDefault();
       dragCounter = 0;
       overlay.classList.remove("active");
 
-      if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-        const file = e.dataTransfer.files[0];
-        const floatingWin = document.getElementById("floatingWindow");
-        const fabBtn = document.getElementById("floatingFabBtn");
-
-        const clickX = e.clientX;
-        const clickY = e.clientY;
-        let isFloatingTarget = false;
-
-        if (floatingWin && floatingWin.classList.contains("active")) {
-          const rect = floatingWin.getBoundingClientRect();
-          if (clickX >= rect.left - 40 && clickX <= rect.right + 40 &&
-              clickY >= rect.top - 40 && clickY <= rect.bottom + 40) {
-            isFloatingTarget = true;
+      if (e.dataTransfer) {
+        let file = null;
+        if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+          file = e.dataTransfer.files[0];
+        } else if (e.dataTransfer.items && e.dataTransfer.items.length > 0) {
+          const item = e.dataTransfer.items[0];
+          if (item.kind === "file") {
+            file = item.getAsFile();
           }
         }
 
-        if (fabBtn) {
-          const fabRect = fabBtn.getBoundingClientRect();
-          if (clickX >= fabRect.left - 40 && clickX <= fabRect.right + 40 &&
-              clickY >= fabRect.top - 40 && clickY <= fabRect.bottom + 40) {
-            isFloatingTarget = true;
-          }
-        }
-
-        if (isFloatingTarget && typeof window.handleFloatingFileGlobal === "function") {
-          window.handleFloatingFileGlobal(file);
-        } else {
+        if (file) {
           handleFileSelected(file);
           const mainCard = document.querySelector(".converter-card");
           if (mainCard) mainCard.scrollIntoView({ behavior: "smooth" });

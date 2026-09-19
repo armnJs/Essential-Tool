@@ -126,7 +126,7 @@
 | SEC-27 | Security | Static file directory traversal | P0 | ✅ PASSED | Directory traversal out of /static/ blocked |
 | SEC-28 | Security | HTTP security headers audit | P2 | ✅ PASSED | X-Frame-Options: SAMEORIGIN present |
 | LOAD-01 | Load & Performance | Concurrent conversions - moderate (20 concurrent) | P0 | ✅ PASSED | 20/20 requests completed in 0.24s |
-| LOAD-02 | Load & Performance | Concurrent conversions - high (50 concurrent) | P1 | ✅ PASSED | 50/50 requests completed in 0.57s |
+| LOAD-02 | Load & Performance | Concurrent conversions - high (50 concurrent) | P1 | ✅ PASSED | 50/50 requests completed in 0.62s |
 | LOAD-03 | Load & Performance | Sustained load check | P1 | ✅ PASSED | Memory RSS bounded; all temp buffers cleaned up in memory |
 | LOAD-04 | Load & Performance | Large image conversion (2000x2000) | P1 | ✅ PASSED | Converted 2000x2000 PNG to JPG (63130 bytes) |
 | LOAD-05 | Load & Performance | Large document conversion | P1 | ✅ PASSED | Large text conversion SLA met under 1 second |
