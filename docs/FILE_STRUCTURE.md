@@ -8,42 +8,48 @@ This document provides a complete, clear blueprint of the **OmniConvert** projec
 
 ```text
 OmniConvert/
-├── 📄 FILE_STRUCTURE.md             # Complete directory & module reference guide (This file)
-├── 📄 PROJECT_FLOW.md              # End-to-end architecture diagrams & sequence flows
 ├── 📄 README.md                    # High-level feature overview, quickstart & usage guide
-├── 📄 context.md                   # Technical context, API routes & conversion matrix summary
-├── 📄 pyproject.toml               # Python project configuration & dependencies metadata
-├── 📄 requirements.txt             # Pip dependencies manifest
-├── 📄 server.py                    # Main FastAPI server entry point & HTTP router
-├── 📄 run_full_suite.py            # Comprehensive 140-scenario integration test suite
-├── 📄 test_converters.py           # Core unit test runner for converter engines
-├── 📄 verify_ownership.py          # Steganographic provenance & zero-width verification CLI
-├── 📄 CODE_OF_CONDUCT.md           # Community guidelines & code of conduct
-├── 📄 CONTRIBUTING.md              # Contribution guidelines & pull request workflows
 ├── 📄 LICENSE                      # MIT Open Source License
-├── 📄 omniconvert_test_cases.md    # Test plan mapping all 140 test cases across 6 sections
-├── 📄 omniconvert_test_results.md   # Official execution log showing 100% test pass rate
+├── 📄 .gitignore                   # Git ignore rules
+├── 📄 requirements.txt             # Core Python dependencies manifest
+├── 📄 server.py                    # Main FastAPI server entry point & HTTP API router
 │
 ├── 📁 converters/                  # Core Format Conversion Registry & Domain Engines
-│   ├── 📄 __init__.py              # Python package marker & version metadata
-│   ├── 📄 registry.py              # Dispatcher catalog, allowed format router & entry point
-│   ├── 📄 image_converter.py       # Image transformations (PNG, JPG, WEBP, GIF, SVG, BMP, ICO)
-│   ├── 📄 doc_converter.py         # Document, Office & Notebook converter (PDF, DOCX, XLSX, IPYNB)
-│   ├── 📄 data_converter.py        # Structured data & code converter (JSON, YAML, XML, CSV, SQL)
-│   ├── 📄 audio_converter.py       # Audio waveform generator & Text-to-Speech (TTS) synthesis
-│   ├── 📄 archive_converter.py     # Compression engine (ZIP, TAR archive creation)
-│   └── 📄 watermark.py             # Zero-width Unicode steganography & provenance framework
+│   ├── 📄 __init__.py              # Python package initializer
+│   ├── 📄 registry.py              # Master dispatcher catalog & format target router
+│   ├── 📄 image_converter.py       # Image transformations (PNG, JPG, WEBP, GIF, BMP, ICO, TIFF)
+│   ├── 📄 doc_converter.py         # Document & Notebook converter (PDF, DOCX, XLSX, CSV, IPYNB)
+│   ├── 📄 data_converter.py        # Data converter (JSON, YAML, XML, CSV, TSV, SQL, Base64)
+│   ├── 📄 audio_converter.py       # Text-to-Speech (TTS) & synthetic audio waveform generator
+│   └── 📄 archive_converter.py     # Compression engine (ZIP, TAR archive creation/extraction)
 │
 ├── 📁 static/                      # Single-Page Web Frontend & Static Assets
 │   ├── 📄 index.html               # Main HTML5 SPA interface structure & layout shell
-│   ├── 📄 404.html                 # Custom 404 error page with HTML5 Canvas particle physics
+│   ├── 📄 404.html                 # Custom 404 error fallback page
 │   ├── 📁 css/
-│   │   └── 📄 style.css            # Glassmorphic CSS design system, dark/light themes & animations
+│   │   └── 📄 style.css            # Responsive CSS design system, dark/light themes & components
 │   └── 📁 js/
-│       └── 📄 app.js               # Reactive JavaScript controller, drag-and-drop & API handler
+│       └── 📄 app.js               # Client JavaScript controller, drag-and-drop & API handler
 │
-└── 📁 docs/                        # Project Plans & Historical Development Reports
-    ├── 📄 OpenSource&Ownership_plan.md  # Architectural plan for zero-width provenance protection
+├── 📁 docs/                        # Dedicated Documentation Room
+│   ├── 📄 context.md               # Technical context, architecture & API route reference
+│   ├── 📄 PROJECT_FLOW.md          # End-to-end architecture diagrams & sequence flows
+│   ├── 📄 FILE_STRUCTURE.md        # Directory & module reference guide (This file)
+│   ├── 📄 Rebuild_plan.md          # Rebuild blueprint & milestone notes
+│   ├── 📄 OpenSource&Ownership_plan.md # Provenance & open source ownership documentation
+│   ├── 📄 CONTRIBUTING.md          # Contribution guidelines & pull request workflows
+│   ├── 📄 CODE_OF_CONDUCT.md       # Community guidelines & code of conduct
+│   └── 📄 v1.md                    # Legacy v1 historical notes
+│
+├── 📁 tests/                       # Test Suite Room
+│   ├── 📄 __init__.py              # Test package initializer
+│   └── 📄 test_converters.py       # Unit test runner for converters & FastAPI routes
+│
+└── 📁 scripts/                     # Helper Scripts & Tools Room
+    ├── 📄 __init__.py              # Package initializer
+    ├── 📄 verify_ownership.py      # Steganographic provenance & ownership verification CLI tool
+    └── 📄 legacy_streamlit_app.py  # Legacy Streamlit prototype
+```e&Ownership_plan.md  # Architectural plan for zero-width provenance protection
     ├── 📄 implementation_plan.md        # Technical implementation milestones
     ├── 📄 summary.md                    # Project completion & feature delivery summary
     └── 📄 walkthrough.md                # Interactive walkthrough & verification results

@@ -2,42 +2,72 @@ import io
 import os
 import zipfile
 import tarfile
+from typing import Dict, Any, Tuple
 
-def convert_archive(input_bytes: bytes, src_ext: str, target_ext: str, filename: str = "file", options: dict = None) -> tuple[bytes, str, str]:
+ARCHIVE_MIME_TYPES = {
+    "zip": "application/zip",
+    "tar": "application/x-tar",
+    "gz": "application/gzip",
+    "tar.gz": "application/gzip"
+}
+
+SUPPORTED_ARCHIVE_FORMATS = list(ARCHIVE_MIME_TYPES.keys())
+
+
+def convert_archive(
+    input_bytes: bytes,
+    filename: str,
+    src_ext: str,
+    target_ext: str,
+    options: Dict[str, Any] = None
+) -> Tuple[bytes, str, str]:
     """
-    Handle archive creation and extraction.
-    Returns (output_bytes, mime_type, target_ext).
+    Handles compression (packaging input bytes into ZIP/TAR) and extraction.
+    Returns: (output_bytes, mime_type, target_ext)
     """
     if options is None:
         options = {}
 
-    src = src_ext.lower().replace(".", "")
-    target = target_ext.lower().replace(".", "")
+    src_clean = src_ext.lower().strip().replace(".", "")
+    target_clean = target_ext.lower().strip().replace(".", "")
 
-    # Convert single/multiple file into ZIP archive
-    if target == "zip":
-        out_buf = io.BytesIO()
-        with zipfile.ZipFile(out_buf, 'w', zipfile.ZIP_DEFLATED) as zf:
-            zf.writestr(filename, input_bytes)
-        return out_buf.getvalue(), "application/zip", "zip"
+    if target_clean not in ARCHIVE_MIME_TYPES and target_clean not in ["txt", "png", "jpg"]:
+        target_clean = "zip"
 
-    # Convert single file into TAR / TAR.GZ archive
-    if target in ["tar", "gz", "tgz"]:
-        out_buf = io.BytesIO()
-        mode = "w:gz" if target in ["gz", "tgz"] else "w"
-        with tarfile.open(fileobj=out_buf, mode=mode) as tf:
-            ti = tarfile.TarInfo(name=filename)
-            ti.size = len(input_bytes)
-            tf.addfile(ti, io.BytesIO(input_bytes))
-        mime = "application/gzip" if "gz" in target else "application/x-tar"
-        return out_buf.getvalue(), mime, target
+    # Extraction route: If source is ZIP and target is not an archive
+    if src_clean == "zip" and target_clean not in ARCHIVE_MIME_TYPES:
+        return _extract_zip(input_bytes, target_clean)
 
-    # Unpack ZIP archive into first extracted file or merged text
-    if src == "zip":
-        with zipfile.ZipFile(io.BytesIO(input_bytes), 'r') as zf:
+    # Packaging route: Compress payload into ZIP or TAR
+    safe_name = os.path.basename(filename) if filename else "file"
+    if not safe_name or safe_name == "file":
+        safe_name = f"document.{src_clean}"
+
+    if target_clean in ["tar", "gz", "tar.gz"]:
+        buf = io.BytesIO()
+        with tarfile.open(fileobj=buf, mode="w:gz") as tar:
+            info = tarfile.TarInfo(name=safe_name)
+            info.size = len(input_bytes)
+            tar.addfile(info, io.BytesIO(input_bytes))
+        return buf.getvalue(), ARCHIVE_MIME_TYPES["tar.gz"], "tar.gz"
+    else:
+        # ZIP Archive
+        buf = io.BytesIO()
+        with zipfile.ZipFile(buf, "w", zipfile.ZIP_DEFLATED) as zf:
+            zf.writestr(safe_name, input_bytes)
+        return buf.getvalue(), ARCHIVE_MIME_TYPES["zip"], "zip"
+
+
+def _extract_zip(input_bytes: bytes, target_clean: str) -> Tuple[bytes, str, str]:
+    """Extracts first file or concatenated text from ZIP archive."""
+    try:
+        with zipfile.ZipFile(io.BytesIO(input_bytes), "r") as zf:
             names = zf.namelist()
-            if names:
-                first_file = zf.read(names[0])
-                return first_file, "application/octet-stream", target
-
-    raise ValueError(f"Unsupported archive conversion from .{src} to .{target}")
+            if not names:
+                raise ValueError("ZIP archive is empty.")
+            # Read first file in archive
+            first_name = names[0]
+            content = zf.read(first_name)
+            return content, "application/octet-stream", target_clean
+    except Exception as e:
+        raise ValueError(f"Failed to extract payload from ZIP archive: {e}")

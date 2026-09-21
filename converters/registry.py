@@ -1,145 +1,177 @@
-# OmniConvert Converter Registry Engine
-# Author: Armaan | Project: OmniConvert
-# OmniConvert Registry Watermark ﻿​‌​​‌‌‌‌‍​‌​‌​‌‌‌‍​‌​​‌‌‌​‍​‌​​​‌​‌‍​‌​‌​​‌​‍​​‌‌‌​‌​‍​​‌​​​​​‍​‌​​​​​‌‍​‌‌‌​​‌​‍​‌‌​‌‌​‌‍​‌‌​​​​‌‍​‌‌​​​​‌‍​‌‌​‌‌‌​‍​​‌​​​​​‍​‌‌‌‌‌​​‍​​‌​​​​​‍​‌​‌​​​​‍​‌​‌​​‌​‍​‌​​‌‌‌‌‍​‌​​‌​‌​‍​‌​​​‌​‌‍​‌​​​​‌‌‍​‌​‌​‌​​‍​​‌‌‌​‌​‍​​‌​​​​​‍​‌​​‌‌‌‌‍​‌‌​‌‌​‌‍​‌‌​‌‌‌​‍​‌‌​‌​​‌‍​‌​​​​‌‌‍​‌‌​‌‌‌‌‍​‌‌​‌‌‌​‍​‌‌‌​‌‌​‍​‌‌​​‌​‌‍​‌‌‌​​‌​‍​‌‌‌​‌​​‍​​‌​​​​​‍​‌‌‌‌‌​​‍​​‌​​​​​‍​‌​‌​​‌‌‍​‌​​‌​​‌‍​‌​​​‌‌‌‍​‌​​‌‌‌​‍​‌​​​​​‌‍​‌​‌​‌​​‍​‌​‌​‌​‌‍​‌​‌​​‌​‍​‌​​​‌​‌‍​​‌‌‌​‌​‍​​‌​​​​​‍​​‌‌​​​​‍​‌‌‌‌​​​‍​​‌‌‌​​‌‍​‌​​​‌‌​‍​​‌‌‌​​​‍​‌​​​​‌​‍​​‌‌​‌​​‍​‌​​​​​‌‍​​‌‌​​‌​‍​‌​​​​‌‌‍​​‌‌​​​‌‍​‌​​​‌​​‍​​‌‌​​‌‌‍​‌​​​‌​‌‍​​‌‌​‌‌‌‍​‌​​​‌‌​‍​​‌‌​‌‌​‍​‌​​​​​‌﻿
-# OmniConvert Converter Registry Engine
-# Author: Armaan | Project: OmniConvert
-# ﻿​​‌​‌‌‌‌﻿​​‌​‌​​﻿​​‌​‌​‌﻿​​‌‌​​​﻿​​‌​​​​﻿​​‌‌​‌​﻿​​‌​‌​‌﻿​​‌​‌​‌﻿​​‌‌​‌​﻿​​‌​‌‌​﻿​​‌​‌​‌﻿​​‌​​‌‌﻿​​‌​​‌‌﻿​​‌​‌‌​﻿​​‌​‌​​﻿​​‌​‌‌​﻿​​‌​​‌‌﻿​​‌​‌​‌﻿​​‌​​‌​﻿​​‌​‌​​﻿​​‌​‌‌​﻿​​‌​​‌​﻿​​‌​‌‌‌﻿​​‌​​‌‌﻿​​‌​​‌​﻿​​‌​‌​​﻿​​‌​‌‌​﻿​​‌​​‌‌﻿​​‌​‌​‌﻿​​‌​​‌​﻿​​‌​‌​​﻿​​‌​‌‌​﻿​​‌​​‌​﻿​​‌​‌‌‌﻿​​‌​​‌‌﻿​​‌​​‌​﻿​​‌​‌​​﻿​​‌​‌‌​﻿​​‌​​‌‌﻿​​‌​‌​‌﻿​​‌​​‌​﻿​​‌​‌​​﻿​​‌​‌‌​﻿​​‌​​‌​﻿​​‌​‌‌‌﻿​​‌​​‌‌﻿​​‌​​‌​﻿​​‌​‌​​﻿​​‌​‌‌​﻿​​‌​​‌‌﻿​​‌​‌​‌﻿​​‌​​‌​﻿​​‌​‌​​﻿​​‌​‌‌​﻿​​‌​​‌​﻿​​‌​‌‌‌﻿​​‌​​‌‌﻿​​‌​​‌​﻿​​‌​‌​​﻿​​‌​‌‌​﻿​​‌​​‌‌﻿​​‌​‌​‌﻿​​‌​​‌​﻿​​‌​‌​​﻿​​‌​‌‌​﻿​​‌​​‌​﻿​​‌​‌‌‌﻿​​‌​​‌‌﻿​​‌​​‌​﻿​​‌​‌​​﻿​​‌​‌‌​﻿​​‌​​‌‌﻿​​‌​‌​‌﻿​​‌​​‌​﻿​​‌​‌​​﻿​​‌​‌‌​﻿​​‌​​‌​﻿​​‌​‌‌‌﻿​​‌​​‌‌﻿​​‌​​‌​﻿​​‌​‌​​﻿​​‌​‌‌​﻿​​‌​​‌‌﻿​​‌​‌​‌﻿​​‌​​‌​﻿​​‌​‌​​﻿​​‌​‌‌​﻿​​‌​​‌​﻿​​‌​‌‌‌﻿​​‌​​‌‌﻿​​‌​​‌​﻿​​‌​‌​​﻿​​‌​‌‌​﻿​​‌​​‌‌﻿​​‌​‌​‌﻿​​‌​​‌​﻿​​‌​‌​​﻿​​‌​‌‌​﻿​​‌​​‌​﻿​​‌​‌‌‌﻿​​‌​​‌‌﻿​​‌​​‌​﻿​​‌​‌​​﻿​​‌​‌‌​﻿​​‌​​‌‌﻿​​‌​‌​‌﻿​​‌​​‌​﻿​​‌​‌​​﻿​​‌​‌‌​﻿​​‌​​‌​﻿​​‌​‌‌‌﻿​​‌​​‌‌﻿
-
 import os
-from converters.image_converter import convert_image, SUPPORTED_IMAGE_FORMATS
-from converters.doc_converter import convert_document
-from converters.data_converter import convert_data
-from converters.audio_converter import convert_audio_or_tts
-from converters.archive_converter import convert_archive
-from converters.watermark import watermark_file_bytes
+import io
+from typing import Dict, Any, List, Tuple
 
-# Master catalog of supported formats grouped by category
-FORMAT_CATALOG = {
-    "images": {
-        "name": "Images",
-        "icon": "image",
-        "formats": ["png", "jpg", "jpeg", "webp", "gif", "bmp", "ico", "tiff", "svg"]
-    },
-    "documents": {
-        "name": "Documents & Office",
-        "icon": "file-text",
-        "formats": ["pdf", "docx", "ipynb", "txt", "md", "html", "csv", "xlsx", "epub"]
-    },
-    "data": {
-        "name": "Data & Code",
-        "icon": "code",
-        "formats": ["json", "yaml", "xml", "csv", "tsv", "sql", "py", "ipynb", "base64"]
-    },
-    "audio": {
-        "name": "Audio & Speech (TTS)",
-        "icon": "music",
-        "formats": ["mp3", "wav"]
-    },
-    "archives": {
-        "name": "Archives & Compression",
-        "icon": "archive",
-        "formats": ["zip", "tar", "gz"]
-    }
-}
+from converters.image_converter import convert_image, SUPPORTED_IMAGE_FORMATS, IMAGE_MIME_TYPES
+from converters.doc_converter import convert_document, SUPPORTED_DOC_FORMATS, DOC_MIME_TYPES
+from converters.data_converter import convert_data, SUPPORTED_DATA_FORMATS, DATA_MIME_TYPES
+from converters.audio_converter import convert_audio_or_tts, SUPPORTED_AUDIO_FORMATS, AUDIO_MIME_TYPES
+from converters.archive_converter import convert_archive, SUPPORTED_ARCHIVE_FORMATS, ARCHIVE_MIME_TYPES
+from converters.video_converter import convert_video, SUPPORTED_VIDEO_FORMATS, VIDEO_MIME_TYPES
 
-# Dynamic Matrix for target formats by source extension
-CONVERSION_TARGETS = {
-    # Jupyter Notebook
-    "ipynb": ["pdf", "docx", "html", "md", "txt", "py", "zip"],
+# Master Conversion Matrix / Target Map
+CONVERSION_TARGETS: Dict[str, List[str]] = {
+    # Video & iOS Video Formats
+    "mp4": ["mkv", "avi", "webm", "mov", "gif", "mp3", "wav", "zip"],
+    "mov": ["mp4", "mkv", "avi", "webm", "gif", "mp3", "wav", "zip"],
+    "m4v": ["mp4", "mov", "webm", "gif", "mp3", "zip"],
+    "mkv": ["mp4", "avi", "webm", "gif", "mp3", "zip"],
+    "avi": ["mp4", "mkv", "webm", "gif", "mp3", "zip"],
+    "webm": ["mp4", "mkv", "avi", "gif", "mp3", "zip"],
 
-    # Images
-    "png": ["jpg", "webp", "pdf", "bmp", "ico", "gif", "tiff", "zip", "base64"],
+    # Image & iOS Image Formats
+    "png": ["jpg", "webp", "gif", "bmp", "ico", "icns", "tiff", "pdf", "zip"],
+    "jpg": ["png", "webp", "gif", "bmp", "ico", "icns", "tiff", "pdf", "zip"],
+    "jpeg": ["png", "webp", "gif", "bmp", "ico", "icns", "tiff", "pdf", "zip"],
+    "webp": ["png", "jpg", "gif", "bmp", "ico", "tiff", "pdf", "zip"],
+    "gif": ["png", "jpg", "webp", "bmp", "ico", "mp4", "pdf", "zip"],
+    "bmp": ["png", "jpg", "webp", "gif", "ico", "pdf", "zip"],
+    "ico": ["png", "jpg", "webp", "bmp", "pdf", "zip"],
+    "tiff": ["png", "jpg", "webp", "pdf", "zip"],
+    "heic": ["jpg", "png", "webp", "pdf", "zip"],
+    "heif": ["jpg", "png", "webp", "pdf", "zip"],
+    "icns": ["png", "ico", "jpg", "zip"],
+    "ppm": ["png", "jpg", "bmp", "zip"],
+    "pgm": ["png", "jpg", "bmp", "zip"],
+    "pbm": ["png", "jpg", "bmp", "zip"],
+    "tga": ["png", "jpg", "bmp", "zip"],
+    "eps": ["png", "pdf", "svg", "zip"],
+    "dds": ["png", "jpg", "zip"],
 
-    "jpg": ["png", "webp", "pdf", "bmp", "ico", "gif", "tiff", "zip", "base64"],
-    "jpeg": ["png", "webp", "pdf", "bmp", "ico", "gif", "tiff", "zip", "base64"],
-    "webp": ["png", "jpg", "pdf", "bmp", "ico", "gif", "tiff", "zip", "base64"],
-    "bmp": ["png", "jpg", "webp", "pdf", "ico", "gif", "tiff", "zip"],
-    "gif": ["png", "jpg", "webp", "mp4", "pdf", "zip"],
-    "ico": ["png", "jpg", "webp", "bmp"],
-    "tiff": ["png", "jpg", "pdf", "webp"],
-    "svg": ["png", "jpg", "webp", "pdf", "html"],
-
-    # Documents
-    "pdf": ["png", "jpg", "txt", "docx", "html", "md", "zip"],
+    # Document & Apple iWork Formats
+    "pdf": ["docx", "txt", "html", "md", "zip"],
     "docx": ["pdf", "txt", "html", "md", "zip"],
-    "txt": ["pdf", "docx", "html", "md", "ipynb", "mp3", "json", "base64", "zip"],
-    "md": ["pdf", "docx", "html", "txt", "ipynb", "mp3", "zip"],
-    "html": ["pdf", "docx", "txt", "md", "ipynb", "png", "zip"],
+    "txt": ["pdf", "docx", "html", "md", "csv", "json", "mp3", "wav", "zip"],
+    "md": ["pdf", "docx", "html", "txt", "mp3", "wav", "zip"],
+    "html": ["pdf", "docx", "txt", "md", "zip"],
+    "pages": ["pdf", "docx", "txt", "zip"],
+    "numbers": ["xlsx", "csv", "json", "pdf", "zip"],
+    "key": ["pdf", "txt", "zip"],
+    "webloc": ["txt", "html", "zip"],
+    "rtf": ["docx", "pdf", "txt", "zip"],
+    "epub": ["txt", "pdf", "html", "zip"],
 
-    # Data sheets
-    "csv": ["xlsx", "json", "xml", "html", "md", "tsv", "sql", "zip"],
-    "xlsx": ["csv", "json", "xml", "html", "md", "tsv", "zip"],
+    # Spreadsheet Formats
+    "xlsx": ["csv", "tsv", "html", "json", "xml", "sql", "md", "txt", "parquet", "zip"],
+    "xls": ["csv", "tsv", "html", "json", "xml", "sql", "md", "txt", "zip"],
+    "csv": ["xlsx", "tsv", "json", "yaml", "xml", "sql", "vcf", "ndjson", "parquet", "html", "md", "txt", "zip"],
+    "tsv": ["xlsx", "csv", "json", "yaml", "xml", "sql", "ndjson", "parquet", "html", "md", "txt", "zip"],
 
-    # Data & Code
-    "py": ["ipynb", "txt", "md", "json", "zip"],
-    "json": ["yaml", "xml", "csv", "tsv", "sql", "py", "ipynb", "txt", "base64", "zip"],
-    "yaml": ["json", "xml", "csv", "txt", "zip"],
-    "yml": ["json", "xml", "csv", "txt", "zip"],
-    "xml": ["json", "yaml", "csv", "txt", "zip"],
-    "sql": ["csv", "json", "ipynb", "txt"],
-    "base64": ["txt", "png", "json"],
+    # Jupyter Notebook
+    "ipynb": ["py", "html", "md", "pdf", "docx", "txt", "zip"],
+
+    # Data & iOS Data Formats
+    "json": ["yaml", "xml", "csv", "tsv", "sql", "plist", "toml", "ndjson", "parquet", "base64", "txt", "zip"],
+    "yaml": ["json", "xml", "csv", "tsv", "sql", "plist", "toml", "base64", "txt", "zip"],
+    "yml": ["json", "xml", "csv", "tsv", "sql", "plist", "toml", "base64", "txt", "zip"],
+    "xml": ["json", "yaml", "csv", "tsv", "sql", "plist", "txt", "zip"],
+    "plist": ["json", "yaml", "xml", "csv", "txt", "zip"],
+    "vcf": ["csv", "json", "txt", "zip"],
+    "toml": ["json", "yaml", "xml", "txt", "zip"],
+    "ndjson": ["json", "csv", "tsv", "parquet", "zip"],
+    "parquet": ["csv", "json", "tsv", "ndjson", "zip"],
+    "ini": ["json", "yaml", "txt", "zip"],
+    "sql": ["json", "csv", "txt", "zip"],
+    "base64": ["json", "txt", "zip"],
+
+    # Audio & iOS Audio Formats
+    "wav": ["mp3", "m4a", "flac", "ogg", "aac", "zip"],
+    "mp3": ["wav", "m4a", "flac", "ogg", "aac", "zip"],
+    "m4a": ["mp3", "wav", "aac", "flac", "zip"],
+    "caf": ["wav", "mp3", "m4a", "zip"],
+    "aac": ["mp3", "wav", "m4a", "zip"],
+    "flac": ["wav", "mp3", "m4a", "zip"],
+    "ogg": ["mp3", "wav", "m4a", "zip"],
 
     # Archives
-    "zip": ["tar", "gz", "txt"],
-    "tar": ["zip", "gz"],
-    "gz": ["zip", "tar"]
+    "zip": ["tar.gz", "txt", "png", "pdf"]
 }
 
-def get_allowed_targets(src_ext: str) -> list[str]:
-    """Get compatible target extensions for a given source extension."""
-    clean_src = src_ext.lower().replace(".", "").strip()
-    if clean_src in CONVERSION_TARGETS:
-        return CONVERSION_TARGETS[clean_src]
-    
-    # Universal fallbacks for any unknown file format
-    return ["zip", "tar", "base64", "txt"]
+DEFAULT_FALLBACK_TARGETS = ["zip", "txt", "base64"]
 
-def process_conversion(input_bytes: bytes, filename: str, target_ext: str, options: dict = None) -> tuple[bytes, str, str]:
+
+def get_allowed_targets(src_ext: str) -> List[str]:
+    """Returns list of supported target format extensions for a given source extension."""
+    clean_src = src_ext.lower().strip().replace(".", "")
+    return CONVERSION_TARGETS.get(clean_src, DEFAULT_FALLBACK_TARGETS)
+
+
+def process_conversion(
+    input_bytes: bytes,
+    filename: str,
+    target_format: str,
+    options: Dict[str, Any] = None
+) -> Tuple[bytes, str, str]:
     """
-    Central dispatcher to handle conversion of input_bytes into target_ext.
-    Returns (output_bytes, mime_type, final_filename)
+    Main conversion registry dispatcher.
+    Routes input stream to domain converters based on format rules.
+    Returns: (output_bytes, mime_type, final_filename)
     """
     if options is None:
         options = {}
 
-    name, ext = os.path.splitext(filename)
-    src_ext = ext.lower().replace(".", "").strip()
-    target_clean = target_ext.lower().replace(".", "").strip()
+    if not input_bytes:
+        raise ValueError("Conversion payload is empty (0 bytes).")
 
-    if not src_ext:
-        src_ext = "txt" # default assumption for extensionless files
+    base_name, raw_ext = os.path.splitext(filename)
+    src_ext = raw_ext.replace(".", "").lower().strip() or "txt"
+    if not base_name:
+        base_name = "converted_file"
 
-    # 1. Archives (ZIP, TAR, GZ) - Package any input file or extract archives
-    if target_clean in ["zip", "tar", "gz"] or src_ext in ["zip", "tar", "gz"]:
-        output_bytes, mime, out_ext = convert_archive(input_bytes, src_ext, target_clean, filename, options)
-        out_filename = f"{name}.{out_ext}"
-        return watermark_file_bytes(output_bytes, out_filename), mime, out_filename
+    target_clean = target_format.lower().strip().replace(".", "")
+    if target_clean == "jpeg":
+        target_clean = "jpg"
 
-    # 2. Image Conversions
-    if src_ext in ["png", "jpg", "jpeg", "webp", "bmp", "gif", "ico", "tiff", "svg"] and target_clean in ["png", "jpg", "jpeg", "webp", "bmp", "gif", "ico", "tiff"]:
-        output_bytes, mime = convert_image(input_bytes, src_ext, target_clean, options)
-        out_filename = f"{name}.{target_clean}"
-        return watermark_file_bytes(output_bytes, out_filename), mime, out_filename
+    # Rule 1: Archives & Compression Route
+    if target_clean in ["zip", "tar", "gz", "tar.gz"] or src_ext == "zip":
+        out_bytes, mime, out_ext = convert_archive(input_bytes, filename, src_ext, target_clean, options)
+        out_filename = f"{base_name}.{out_ext}"
+        return out_bytes, mime, out_filename
 
-    # 3. Audio & TTS
-    if target_clean in ["mp3", "wav"] and src_ext in ["txt", "md", "html"]:
-        output_bytes, mime, out_ext = convert_audio_or_tts(input_bytes, src_ext, target_clean, options)
-        out_filename = f"{name}.{out_ext}"
-        return watermark_file_bytes(output_bytes, out_filename), mime, out_filename
+    # Rule 2: Video Processing Route (MP4, MOV, M4V, MKV, AVI, WEBM, GIF)
+    if src_ext in SUPPORTED_VIDEO_FORMATS or target_clean in ["mp4", "mkv", "avi", "webm", "m4v"]:
+        if src_ext not in ["png", "jpg", "jpeg", "txt", "json", "pdf", "docx"]:
+            out_bytes, mime, out_ext = convert_video(input_bytes, src_ext, target_clean, options)
+            out_filename = f"{base_name}.{out_ext}"
+            return out_bytes, mime, out_filename
 
-    # 4. Document, Spreadsheet & Notebook Conversions (PDF, DOCX, XLSX, XLS, IPYNB)
-    if src_ext in ["xlsx", "xls", "docx", "doc", "pdf", "ipynb"] or target_clean in ["pdf", "docx", "ipynb"]:
-        output_bytes, mime, out_ext = convert_document(input_bytes, src_ext, target_clean, options)
-        out_filename = f"{name}.{out_ext}"
-        return watermark_file_bytes(output_bytes, out_filename), mime, out_filename
+    # Rule 3: Image Processing Route
+    if src_ext in SUPPORTED_IMAGE_FORMATS and target_clean in SUPPORTED_IMAGE_FORMATS:
+        out_bytes, mime, out_ext = convert_image(input_bytes, src_ext, target_clean, options)
+        out_filename = f"{base_name}.{out_ext}"
+        return out_bytes, mime, out_filename
 
-    # 5. Data & Code Conversions (JSON, YAML, XML, CSV, TSV, SQL, Base64)
-    if (src_ext in ["json", "yaml", "yml", "xml", "csv", "tsv", "sql", "base64"] or target_clean in ["json", "yaml", "yml", "xml", "csv", "tsv", "sql", "py", "base64"]):
-        output_bytes, mime, out_ext = convert_data(input_bytes, src_ext, target_clean, options)
-        out_filename = f"{name}.{out_ext}"
-        return watermark_file_bytes(output_bytes, out_filename), mime, out_filename
+    # Rule 4: Image to PDF Route
+    if src_ext in SUPPORTED_IMAGE_FORMATS and target_clean == "pdf":
+        out_bytes, mime, out_ext = convert_image(input_bytes, src_ext, "pdf", options)
+        out_filename = f"{base_name}.pdf"
+        return out_bytes, "application/pdf", out_filename
 
-    # 6. Fallback Document Conversions (TXT, MD, HTML)
-    output_bytes, mime, out_ext = convert_document(input_bytes, src_ext, target_clean, options)
-    out_filename = f"{name}.{out_ext}"
-    return watermark_file_bytes(output_bytes, out_filename), mime, out_filename
+    # Rule 5: Text to Audio / Speech (TTS) Route
+    if target_clean in ["mp3", "wav", "m4a"] and src_ext in ["txt", "md", "html", "doc", "docx", "pdf"]:
+        out_bytes, mime, out_ext = convert_audio_or_tts(input_bytes, src_ext, target_clean, options)
+        out_filename = f"{base_name}.{out_ext}"
+        return out_bytes, mime, out_filename
+
+    # Rule 6: Audio Processing Route
+    if src_ext in SUPPORTED_AUDIO_FORMATS and target_clean in SUPPORTED_AUDIO_FORMATS:
+        out_bytes, mime, out_ext = convert_audio_or_tts(input_bytes, src_ext, target_clean, options)
+        out_filename = f"{base_name}.{out_ext}"
+        return out_bytes, mime, out_filename
+
+    # Rule 7: Document & Spreadsheet Route
+    if (src_ext in SUPPORTED_DOC_FORMATS or target_clean in SUPPORTED_DOC_FORMATS) and src_ext not in SUPPORTED_DATA_FORMATS:
+        out_bytes, mime, out_ext = convert_document(input_bytes, src_ext, target_clean, options)
+        out_filename = f"{base_name}.{out_ext}"
+        return out_bytes, mime, out_filename
+
+    # Rule 8: Structured Data Route
+    if src_ext in SUPPORTED_DATA_FORMATS or target_clean in SUPPORTED_DATA_FORMATS:
+        out_bytes, mime, out_ext = convert_data(input_bytes, src_ext, target_clean, options)
+        out_filename = f"{base_name}.{out_ext}"
+        return out_bytes, mime, out_filename
+
+    # Default Fallback Document Processing
+    out_bytes, mime, out_ext = convert_document(input_bytes, src_ext, target_clean, options)
+    out_filename = f"{base_name}.{out_ext}"
+    return out_bytes, mime, out_filename

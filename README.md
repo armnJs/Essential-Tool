@@ -42,7 +42,40 @@ For complete file layout and architecture breakdown, see [FILE_STRUCTURE.md](fil
 
 ---
 
-## 🚀 Quickstart
+## 🖥️ One-Click Desktop Launchers
+
+OmniConvert includes native double-clickable launchers for **Windows**, **macOS**, and **Linux**:
+
+### 🍎 macOS Users
+Double-click **`run_mac.command`** in macOS Finder. It automatically sets up Python dependencies, launches the server, and opens your default browser!
+
+### 🪟 Windows Users
+Double-click **`run_win.bat`** in Windows Explorer.
+
+### 🐧 Linux Users
+Run **`./run_linux.sh`** or double-click `run_linux.sh` in your Linux desktop file manager.
+
+### 🐍 Universal Python Launcher
+```bash
+python launch.py
+```
+
+---
+
+## 📦 Building Standalone Executables (.exe / .app)
+
+You can compile OmniConvert into a standalone, zero-dependency binary executable using PyInstaller:
+
+```bash
+python scripts/build_standalone.py
+```
+- **Windows**: Generates `dist/OmniConvert.exe`
+- **macOS**: Generates `dist/OmniConvert`
+- **Linux**: Generates `dist/OmniConvert`
+
+---
+
+## 🚀 Manual Quickstart
 
 ### Prerequisites
 
@@ -52,7 +85,7 @@ For complete file layout and architecture breakdown, see [FILE_STRUCTURE.md](fil
 ### 1. Clone & Install Dependencies
 
 ```bash
-git clone https://github.com/Armaan/OmniConvert.git
+git clone https://github.com/armnJs/OmniConvert.git
 cd OmniConvert
 pip install -r requirements.txt
 ```
@@ -69,7 +102,7 @@ uvicorn server:app --reload --port 8000
 
 ### 3. Open in Browser
 
-Navigate to `http://localhost:8000` in your web browser.
+Navigate to `http://127.0.0.1:8000` in your web browser.
 
 ---
 
@@ -111,14 +144,29 @@ python verify_ownership.py --url http://localhost:8000/api/provenance
 
 ---
 
-## 🤝 Contributing
+## 🔒 Privacy, Security & Terms of Use
 
-Contributions are welcome! Please read [CONTRIBUTING.md](file:///d:/Armaan/Essential%20tool/CONTRIBUTING.md) and adhere to our [CODE_OF_CONDUCT.md](file:///d:/Armaan/Essential%20tool/CODE_OF_CONDUCT.md).
+OmniConvert is designed with a **privacy-first, 100% local processing architecture**. 
+
+- **Zero Data Tracking**: Your files are processed entirely in local memory and are never uploaded to cloud servers or remote tracking endpoints.
+- **Security & Path Sanitization**: Unlimited local file processing without arbitrary size limits, path traversal guards, and safe input parsing.
+- **Misuse Policy & Liability**: Misuse of this software for illegal file conversion, copyright violation, or malware crafting is strictly prohibited. The author (**Armaan**) disclaims all liability for unauthorized third-party misuse.
+
+For complete details, see [PRIVACY_SECURITY_TERMS.md](file:///d:/Armaan/Essential%20tool/docs/PRIVACY_SECURITY_TERMS.md).
 
 ---
 
-## 📜 License
+## 🤝 Contributing
+
+Contributions are welcome! Please read [CONTRIBUTING.md](file:///d:/Armaan/Essential%20tool/docs/CONTRIBUTING.md) and adhere to our [CODE_OF_CONDUCT.md](file:///d:/Armaan/Essential%20tool/docs/CODE_OF_CONDUCT.md).
+
+---
+
+## 📜 License & Author
+
+Created and maintained by **Armaan** ([armnJs](https://github.com/armnJs)).
 
 Distributed under the **MIT License**. See `LICENSE` for more information.
 
 Copyright (c) 2026 **Armaan**.
+

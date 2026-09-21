@@ -1,357 +1,317 @@
 import io
-import os
-import re
-import pandas as pd
-from PIL import Image
-import docx
-import markdown as md_lib
-from bs4 import BeautifulSoup
-from reportlab.lib.pagesizes import letter
-from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle
-from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
-from reportlab.lib import colors
-import pypdf
-
 import json
+import zipfile
+import xml.etree.ElementTree as ET
+from typing import Dict, Any, Tuple
+import pandas as pd
+from pypdf import PdfReader
+from docx import Document
+from reportlab.lib.pagesizes import letter
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
+from reportlab.lib.styles import getSampleStyleSheet
+import markdown
+from bs4 import BeautifulSoup
 
-def parse_ipynb(input_bytes: bytes) -> tuple[str, list[dict]]:
-    """Parse Jupyter Notebook .ipynb bytes into formatted text and structured cells."""
-    data = json.loads(input_bytes.decode("utf-8", errors="ignore"))
-    cells = data.get("cells", [])
-    
-    markdown_chunks = []
-    structured_cells = []
-    
-    for idx, cell in enumerate(cells, 1):
-        cell_type = cell.get("cell_type", "code")
-        source = cell.get("source", [])
-        if isinstance(source, list):
-            source_text = "".join(source)
-        else:
-            source_text = str(source)
-            
-        outputs_text = []
-        if cell_type == "code":
-            for out in cell.get("outputs", []):
-                if "text" in out:
-                    t = out["text"]
-                    outputs_text.append("".join(t) if isinstance(t, list) else str(t))
-                elif "data" in out and "text/plain" in out["data"]:
-                    tp = out["data"]["text/plain"]
-                    outputs_text.append("".join(tp) if isinstance(tp, list) else str(tp))
-                    
-        structured_cells.append({
-            "index": idx,
-            "type": cell_type,
-            "source": source_text,
-            "outputs": "\n".join(outputs_text)
-        })
-        
-        if cell_type == "markdown":
-            markdown_chunks.append(source_text)
-        elif cell_type == "code":
-            code_block = f"```python\n# [In {idx}]\n{source_text}\n```"
-            if outputs_text:
-                out_block = "\n".join(outputs_text)
-                code_block += f"\n\n*Output:*\n```\n{out_block}\n```"
-            markdown_chunks.append(code_block)
-            
-    full_markdown = "\n\n".join(markdown_chunks)
-    return full_markdown, structured_cells
+DOC_MIME_TYPES = {
+    "pdf": "application/pdf",
+    "docx": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    "txt": "text/plain",
+    "md": "text/markdown",
+    "html": "text/html",
+    "csv": "text/csv",
+    "tsv": "text/tab-separated-values",
+    "xlsx": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    "py": "text/x-python",
+    "ipynb": "application/x-ipynb+json",
+    "pages": "application/x-iwork-pages-sffpages",
+    "numbers": "application/x-iwork-numbers-sffnumbers",
+    "key": "application/x-iwork-keynote-sffkey",
+    "webloc": "text/plain",
+    "rtf": "application/rtf",
+    "epub": "application/epub+zip"
+}
+
+SUPPORTED_DOC_FORMATS = list(DOC_MIME_TYPES.keys())
 
 
-def create_ipynb_bytes(source_text: str, is_code: bool = True) -> bytes:
-    """Create Jupyter Notebook (.ipynb) bytes from input source text."""
-    lines = source_text.splitlines(keepends=True)
-    cells = []
-    
-    if is_code:
-        chunk = []
-        for line in lines:
-            if line.startswith("# %%") or line.startswith("# [In"):
-                if chunk:
-                    cells.append({"cell_type": "code", "execution_count": None, "metadata": {}, "outputs": [], "source": chunk})
-                    chunk = []
-            chunk.append(line)
-        if chunk:
-            cells.append({"cell_type": "code", "execution_count": None, "metadata": {}, "outputs": [], "source": chunk})
-    else:
-        cells.append({"cell_type": "markdown", "metadata": {}, "source": lines})
-
-    nb_data = {
-        "cells": cells,
-        "metadata": {
-            "language_info": {"name": "python"},
-            "orig_nbformat": 4
-        },
-        "nbformat": 4,
-        "nbformat_minor": 2
-    }
-    return json.dumps(nb_data, indent=2, ensure_ascii=False).encode("utf-8")
-
-
-def convert_document(input_bytes: bytes, src_ext: str, target_ext: str, options: dict = None) -> tuple[bytes, str, str]:
+def convert_document(
+    input_bytes: bytes,
+    src_ext: str,
+    target_ext: str,
+    options: Dict[str, Any] = None
+) -> Tuple[bytes, str, str]:
     """
-    Convert document between formats.
-    Returns (output_bytes, mime_type, suggested_filename_suffix).
+    Handles Document, Spreadsheet, Jupyter Notebook, and Apple iWork conversions.
+    Returns: (output_bytes, mime_type, target_ext)
     """
     if options is None:
         options = {}
 
-    src = src_ext.lower().replace(".", "")
-    target = target_ext.lower().replace(".", "")
+    src_clean = src_ext.lower().strip().replace(".", "")
+    target_clean = target_ext.lower().strip().replace(".", "")
+    if target_clean == "markdown":
+        target_clean = "md"
 
-    # Convert PY / MD / TXT / HTML / JSON -> IPYNB (Jupyter Notebook)
-    if target == "ipynb":
-        text_content = input_bytes.decode("utf-8", errors="ignore")
-        is_code = src in ["py", "python", "json", "sql"]
-        nb_bytes = create_ipynb_bytes(text_content, is_code=is_code)
-        return nb_bytes, "application/json", "ipynb"
+    if target_clean not in DOC_MIME_TYPES:
+        target_clean = "txt"
 
-    # Jupyter Notebook (.ipynb) Conversions
-    if src == "ipynb":
-        full_md, cells = parse_ipynb(input_bytes)
-        
-        if target == "py":
-            py_code = []
-            for cell in cells:
-                if cell["type"] == "code":
-                    py_code.append(f"# %% [In {cell['index']}]\n{cell['source']}\n")
-            py_text = "\n".join(py_code)
-            return py_text.encode("utf-8"), "text/x-python", "py"
-            
-        if target == "md":
-            return full_md.encode("utf-8"), "text/markdown", "md"
-            
-        if target == "txt":
-            txt_lines = []
-            for cell in cells:
-                txt_lines.append(f"--- Cell {cell['index']} ({cell['type']}) ---")
-                txt_lines.append(cell["source"])
-                if cell["outputs"]:
-                    txt_lines.append(f"[Output]:\n{cell['outputs']}")
-                txt_lines.append("")
-            return "\n".join(txt_lines).encode("utf-8"), "text/plain", "txt"
-            
-        if target == "html":
-            html_parts = ["<!DOCTYPE html><html><head><meta charset='utf-8'><title>Jupyter Notebook</title>",
-                          "<style>body{font-family:sans-serif;max-width:900px;margin:2rem auto;padding:0 1rem;line-height:1.6;color:#1e293b;}",
-                          "pre{background:#f1f5f9;padding:1rem;border-radius:8px;overflow-x:auto;border:1px solid #cbd5e1;font-family:monospace;}",
-                          ".cell-code{background:#f8fafc;border-left:4px solid #6366f1;margin:1.5rem 0;padding:1rem;border-radius:0 8px 8px 0;}",
-                          ".cell-output{background:#0f172a;color:#38bdf8;padding:0.75rem;border-radius:6px;font-family:monospace;font-size:0.9rem;margin-top:0.5rem;}",
-                          "</style></head><body>", "<h1>Jupyter Notebook Export</h1>"]
-            for cell in cells:
-                if cell["type"] == "markdown":
-                    html_parts.append(f"<div>{md_lib.markdown(cell['source'])}</div>")
-                else:
-                    code_escaped = cell["source"].replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
-                    html_parts.append(f"<div class='cell-code'><strong>In [{cell['index']}]:</strong><pre><code>{code_escaped}</code></pre>")
-                    if cell["outputs"]:
-                        out_escaped = cell["outputs"].replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
-                        html_parts.append(f"<div class='cell-output'><strong>Output:</strong><pre>{out_escaped}</pre></div>")
-                    html_parts.append("</div>")
-            html_parts.append("</body></html>")
-            return "".join(html_parts).encode("utf-8"), "text/html", "html"
-            
-        if target == "docx":
-            doc = docx.Document()
-            doc.add_heading("Jupyter Notebook Export", level=1)
-            for cell in cells:
-                if cell["type"] == "markdown":
-                    doc.add_paragraph(cell["source"])
-                else:
-                    p = doc.add_paragraph()
-                    p.add_run(f"In [{cell['index']}]:").bold = True
-                    p_code = doc.add_paragraph(cell["source"])
-                    p_code.style = 'Quote'
-                    if cell["outputs"]:
-                        p_out = doc.add_paragraph(f"Output:\n{cell['outputs']}")
-                        p_out.style = 'List Bullet'
-            buffer = io.BytesIO()
-            doc.save(buffer)
-            return buffer.getvalue(), "application/vnd.openxmlformats-officedocument.wordprocessingml.document", "docx"
-            
-        if target == "pdf":
-            buffer = io.BytesIO()
-            doc = SimpleDocTemplate(buffer, pagesize=letter, rightMargin=54, leftMargin=54, topMargin=54, bottomMargin=54)
-            styles = getSampleStyleSheet()
-            normal = styles['Normal']
-            normal.leading = 14
-            story = [Paragraph("<b>Jupyter Notebook Document</b>", styles['Heading1']), Spacer(1, 12)]
-            
-            for cell in cells:
-                if cell["type"] == "markdown":
-                    for line in cell["source"].splitlines():
-                        if line.strip():
-                            clean_line = line.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
-                            story.append(Paragraph(clean_line, normal))
-                            story.append(Spacer(1, 4))
-                else:
-                    code_hdr = f"<b>In [{cell['index']}]:</b>"
-                    story.append(Paragraph(code_hdr, normal))
-                    clean_code = cell["source"].replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;").replace("\n", "<br/>")
-                    story.append(Paragraph(f"<font color='#4338ca'><code>{clean_code}</code></font>", normal))
-                    if cell["outputs"]:
-                        clean_out = cell["outputs"].replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;").replace("\n", "<br/>")
-                        story.append(Paragraph(f"<font color='#0284c7'>Output: {clean_out}</font>", normal))
-                    story.append(Spacer(1, 10))
-                    
-            doc.build(story)
-            return buffer.getvalue(), "application/pdf", "pdf"
+    # 1. Apple iWork Bundles (.pages, .numbers, .key)
+    if src_clean in ["pages", "numbers", "key"]:
+        return _convert_iwork_bundle(input_bytes, src_clean, target_clean)
 
-    # MD / TXT -> HTML
-    if src in ["md", "txt"] and target == "html":
-        text_content = input_bytes.decode("utf-8", errors="ignore")
-        if src == "md":
-            body = md_lib.markdown(text_content, extensions=['fenced_code', 'tables'])
+    # 2. Apple Safari Link (.webloc)
+    if src_clean == "webloc":
+        return _convert_webloc(input_bytes, target_clean)
+
+    # 3. Jupyter Notebook (.ipynb) processing
+    if src_clean == "ipynb":
+        return _convert_ipynb(input_bytes, target_clean)
+
+    # 4. Spreadsheet Processing (XLSX, XLS, CSV, TSV)
+    if src_clean in ["xlsx", "xls", "csv", "tsv"] or target_clean in ["xlsx", "csv", "tsv"]:
+        if src_clean in ["xlsx", "xls", "csv", "tsv"] and target_clean in ["xlsx", "csv", "tsv", "html", "txt", "md"]:
+            return _convert_spreadsheet(input_bytes, src_clean, target_clean)
+
+    # 5. PDF Input Processing
+    if src_clean == "pdf":
+        return _convert_from_pdf(input_bytes, target_clean)
+
+    # 6. DOCX Input Processing
+    if src_clean == "docx":
+        return _convert_from_docx(input_bytes, target_clean)
+
+    # 7. Text / Markdown / HTML / RTF Input Processing
+    text_content = _extract_text_from_bytes(input_bytes, src_clean)
+
+    if target_clean == "pdf":
+        output_bytes = _render_text_to_pdf(text_content, src_clean)
+        return output_bytes, DOC_MIME_TYPES["pdf"], "pdf"
+    elif target_clean == "docx":
+        output_bytes = _render_text_to_docx(text_content)
+        return output_bytes, DOC_MIME_TYPES["docx"], "docx"
+    elif target_clean == "html":
+        if src_clean == "md":
+            html_body = markdown.markdown(text_content)
+            full_html = f"<!DOCTYPE html><html><head><meta charset='utf-8'></head><body>{html_body}</body></html>"
         else:
-            lines = [f"<p>{line}</p>" for line in text_content.splitlines() if line]
-            body = "\n".join(lines)
-        html = f"<!DOCTYPE html><html><head><meta charset='utf-8'></head><body>{body}</body></html>"
-        return html.encode("utf-8"), "text/html", "html"
-
-    # 1. Images to PDF
-    if src in ["png", "jpg", "jpeg", "webp", "bmp"] and target == "pdf":
-
-        img = Image.open(io.BytesIO(input_bytes))
-        if img.mode != "RGB":
-            img = img.convert("RGB")
-        out = io.BytesIO()
-        img.save(out, format="PDF")
-        return out.getvalue(), "application/pdf", "pdf"
-
-    # 2. Text / Markdown / HTML -> PDF via ReportLab
-    if src in ["txt", "md", "html"] and target == "pdf":
-        text_content = input_bytes.decode("utf-8", errors="ignore")
-        if src == "md":
-            html_content = md_lib.markdown(text_content)
-        elif src == "txt":
-            # Wrap plain text into html paragraphs
-            lines = text_content.splitlines()
-            html_content = "".join([f"<p>{line if line else '&nbsp;'}</p>" for line in lines])
-        else:
-            html_content = text_content
-
-        soup = BeautifulSoup(html_content, "html.parser")
-        plain_text = soup.get_text()
-
-        buffer = io.BytesIO()
-        doc = SimpleDocTemplate(buffer, pagesize=letter, rightMargin=54, leftMargin=54, topMargin=54, bottomMargin=54)
-        styles = getSampleStyleSheet()
-        normal = styles['Normal']
-        normal.leading = 14
-        
-        story = []
-        for paragraph in plain_text.split('\n'):
-            if paragraph.strip():
-                # Escape XML characters for reportlab
-                clean_p = paragraph.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
-                story.append(Paragraph(clean_p, normal))
-                story.append(Spacer(1, 8))
-
-        doc.build(story)
-        return buffer.getvalue(), "application/pdf", "pdf"
-
-    # 3. TXT / Markdown / HTML -> DOCX
-    if src in ["txt", "md", "html"] and target in ["docx", "doc"]:
-        text_content = input_bytes.decode("utf-8", errors="ignore")
-        doc = docx.Document()
-        if src == "md":
-            lines = text_content.splitlines()
-            for line in lines:
-                if line.startswith("# "):
-                    doc.add_heading(line[2:], level=1)
-                elif line.startswith("## "):
-                    doc.add_heading(line[3:], level=2)
-                elif line.startswith("### "):
-                    doc.add_heading(line[4:], level=3)
-                elif line.startswith("- ") or line.startswith("* "):
-                    doc.add_paragraph(line[2:], style='List Bullet')
-                else:
-                    doc.add_paragraph(line)
-        elif src == "html":
+            escaped_text = text_content.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+            full_html = f"<!DOCTYPE html><html><body><pre>{escaped_text}</pre></body></html>"
+        return full_html.encode("utf-8"), DOC_MIME_TYPES["html"], "html"
+    elif target_clean == "md":
+        if src_clean == "html":
             soup = BeautifulSoup(text_content, "html.parser")
-            for p in soup.find_all(['p', 'h1', 'h2', 'h3', 'li']):
-                doc.add_paragraph(p.get_text())
+            md_text = soup.get_text()
         else:
-            doc.add_paragraph(text_content)
-
-        buffer = io.BytesIO()
-        doc.save(buffer)
-        return buffer.getvalue(), "application/vnd.openxmlformats-officedocument.wordprocessingml.document", "docx"
-
-    # 4. DOCX -> TXT / HTML / MD
-    if src in ["docx", "doc"] and target in ["txt", "html", "md"]:
-        doc = docx.Document(io.BytesIO(input_bytes))
-        paragraphs = [p.text for p in doc.paragraphs]
-        
-        if target == "txt":
-            res = "\n".join(paragraphs)
-            return res.encode("utf-8"), "text/plain", "txt"
-        elif target == "md":
-            res = "\n\n".join(paragraphs)
-            return res.encode("utf-8"), "text/markdown", "md"
-        elif target == "html":
-            body = "".join([f"<p>{p}</p>" for p in paragraphs])
-            html = f"<!DOCTYPE html><html><head><meta charset='utf-8'></head><body>{body}</body></html>"
-            return html.encode("utf-8"), "text/html", "html"
-
-    # 5. PDF -> TXT / Extract Text
-    if src == "pdf" and target in ["txt", "md", "html"]:
-        reader = pypdf.PdfReader(io.BytesIO(input_bytes))
-        text_pages = []
-        for i, page in enumerate(reader.pages):
-            txt = page.extract_text() or ""
-            text_pages.append(f"--- Page {i+1} ---\n{txt}")
-        
-        full_text = "\n\n".join(text_pages)
-        if target == "html":
-            body = "".join([f"<h3>Page {i+1}</h3><pre>{page}</pre>" for i, page in enumerate(text_pages)])
-            full_text = f"<!DOCTYPE html><html><body>{body}</body></html>"
-
-        mime = "text/plain" if target in ["txt", "md"] else "text/html"
-        return full_text.encode("utf-8"), mime, target
-
-    # HTML -> MD / TXT
-    if src == "html" and target in ["md", "txt"]:
-        text_content = input_bytes.decode("utf-8", errors="ignore")
-        soup = BeautifulSoup(text_content, "html.parser")
-        headings = [f"# {h.get_text()}" for h in soup.find_all(['h1', 'h2', 'h3'])]
-        paragraphs = [p.get_text() for p in soup.find_all(['p', 'li'])]
-        md_text = "\n\n".join(headings + paragraphs) or soup.get_text()
-        return md_text.encode("utf-8"), "text/markdown" if target == "md" else "text/plain", target
-
-    # 6. CSV / Excel XLSX / Data sheet conversions
-    if src in ["csv", "xlsx", "xls", "json"] and target in ["csv", "xlsx", "json", "html", "md"]:
-        buffer_in = io.BytesIO(input_bytes)
-        if src == "csv":
-            df = pd.read_csv(buffer_in)
-        elif src in ["xlsx", "xls"]:
-            try:
-                df = pd.read_excel(buffer_in, engine='openpyxl')
-            except Exception as e:
-                raise ValueError("Invalid or corrupted XLSX file provided.")
-        elif src == "json":
-            df = pd.read_json(buffer_in)
+            md_text = text_content
+        return md_text.encode("utf-8"), DOC_MIME_TYPES["md"], "md"
+    elif target_clean == "txt":
+        if src_clean == "html":
+            soup = BeautifulSoup(text_content, "html.parser")
+            plain = soup.get_text()
         else:
-            raise ValueError(f"Cannot parse input data sheet {src}")
+            plain = text_content
+        return plain.encode("utf-8"), DOC_MIME_TYPES["txt"], "txt"
 
-        buffer_out = io.BytesIO()
-        if target == "csv":
-            df.to_csv(buffer_out, index=False)
-            return buffer_out.getvalue(), "text/csv", "csv"
-        elif target == "xlsx":
-            with pd.ExcelWriter(buffer_out, engine='openpyxl') as writer:
-                df.to_excel(writer, index=False)
-            return buffer_out.getvalue(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "xlsx"
-        elif target == "json":
-            json_str = df.to_json(orient="records", indent=2)
-            return json_str.encode("utf-8"), "application/json", "json"
-        elif target == "html":
-            html_str = df.to_html(index=False, classes="table table-striped")
-            return html_str.encode("utf-8"), "text/html", "html"
-        elif target == "md":
-            md_str = df.to_markdown(index=False)
-            return md_str.encode("utf-8"), "text/markdown", "md"
+    return text_content.encode("utf-8"), DOC_MIME_TYPES.get(target_clean, "text/plain"), target_clean
 
-    raise ValueError(f"Unsupported document conversion from .{src} to .{target}")
+
+# --- Helper Functions ---
+
+def _convert_iwork_bundle(input_bytes: bytes, src_clean: str, target_clean: str) -> Tuple[bytes, str, str]:
+    """Parses Apple iWork zip archive payload (Pages, Numbers, Keynote)."""
+    try:
+        with zipfile.ZipFile(io.BytesIO(input_bytes), "r") as zf:
+            text_parts = []
+            for name in zf.namelist():
+                if name.endswith(".xml") or name.endswith(".txt"):
+                    content = zf.read(name).decode("utf-8", errors="ignore")
+                    text_parts.append(content)
+            full_text = "\n\n".join(text_parts) if text_parts else f"Apple {src_clean.upper()} Document Content"
+    except Exception:
+        full_text = f"Apple {src_clean.upper()} Document Content"
+
+    if target_clean == "pdf":
+        return _render_text_to_pdf(full_text), DOC_MIME_TYPES["pdf"], "pdf"
+    elif target_clean == "docx":
+        return _render_text_to_docx(full_text), DOC_MIME_TYPES["docx"], "docx"
+    else:
+        return full_text.encode("utf-8"), DOC_MIME_TYPES["txt"], "txt"
+
+
+def _convert_webloc(input_bytes: bytes, target_clean: str) -> Tuple[bytes, str, str]:
+    """Parses Apple Safari .webloc link file."""
+    try:
+        root = ET.fromstring(input_bytes)
+        url = ""
+        for elem in root.iter():
+            if elem.text and elem.text.startswith("http"):
+                url = elem.text.strip()
+                break
+        if not url:
+            url = input_bytes.decode("utf-8", errors="ignore")
+    except Exception:
+        url = input_bytes.decode("utf-8", errors="ignore")
+
+    return url.encode("utf-8"), DOC_MIME_TYPES["txt"], "txt"
+
+
+def _extract_text_from_bytes(input_bytes: bytes, src_ext: str) -> str:
+    """Safely decodes bytes into text string."""
+    try:
+        return input_bytes.decode("utf-8")
+    except UnicodeDecodeError:
+        return input_bytes.decode("latin-1", errors="ignore")
+
+
+def _convert_from_pdf(input_bytes: bytes, target_clean: str) -> Tuple[bytes, str, str]:
+    """Extracts text from PDF and converts to target format."""
+    reader = PdfReader(io.BytesIO(input_bytes))
+    extracted_text = []
+    for page in reader.pages:
+        txt = page.extract_text()
+        if txt:
+            extracted_text.append(txt)
+    
+    full_text = "\n\n".join(extracted_text) if extracted_text else "No text could be extracted from PDF."
+
+    if target_clean == "docx":
+        return _render_text_to_docx(full_text), DOC_MIME_TYPES["docx"], "docx"
+    elif target_clean == "html":
+        lines = [f"<p>{line}</p>" for line in full_text.split("\n") if line.strip()]
+        html = f"<!DOCTYPE html><html><body>{''.join(lines)}</body></html>"
+        return html.encode("utf-8"), DOC_MIME_TYPES["html"], "html"
+    elif target_clean == "md":
+        return full_text.encode("utf-8"), DOC_MIME_TYPES["md"], "md"
+    else:
+        return full_text.encode("utf-8"), DOC_MIME_TYPES["txt"], "txt"
+
+
+def _convert_from_docx(input_bytes: bytes, target_clean: str) -> Tuple[bytes, str, str]:
+    """Extracts text from Word DOCX and converts to target format."""
+    doc = Document(io.BytesIO(input_bytes))
+    paragraphs = [p.text for p in doc.paragraphs if p.text]
+    full_text = "\n\n".join(paragraphs)
+
+    if target_clean == "pdf":
+        return _render_text_to_pdf(full_text, "txt"), DOC_MIME_TYPES["pdf"], "pdf"
+    elif target_clean == "html":
+        html_paras = [f"<p>{p}</p>" for p in paragraphs]
+        html = f"<!DOCTYPE html><html><body>{''.join(html_paras)}</body></html>"
+        return html.encode("utf-8"), DOC_MIME_TYPES["html"], "html"
+    elif target_clean == "md":
+        return full_text.encode("utf-8"), DOC_MIME_TYPES["md"], "md"
+    else:
+        return full_text.encode("utf-8"), DOC_MIME_TYPES["txt"], "txt"
+
+
+def _convert_spreadsheet(input_bytes: bytes, src_clean: str, target_clean: str) -> Tuple[bytes, str, str]:
+    """Converts spreadsheets (XLSX, CSV, TSV) using pandas."""
+    buffer = io.BytesIO(input_bytes)
+    if src_clean in ["xlsx", "xls"]:
+        df = pd.read_excel(buffer)
+    elif src_clean == "tsv":
+        df = pd.read_csv(buffer, sep="\t")
+    else:
+        df = pd.read_csv(buffer)
+
+    out_buffer = io.BytesIO()
+    if target_clean == "xlsx":
+        with pd.ExcelWriter(out_buffer, engine="openpyxl") as writer:
+            df.to_excel(writer, index=False)
+        return out_buffer.getvalue(), DOC_MIME_TYPES["xlsx"], "xlsx"
+    elif target_clean == "tsv":
+        df.to_csv(out_buffer, sep="\t", index=False)
+        return out_buffer.getvalue(), DOC_MIME_TYPES["tsv"], "tsv"
+    elif target_clean == "html":
+        html_str = df.to_html(index=False, classes="table table-striped")
+        return html_str.encode("utf-8"), DOC_MIME_TYPES["html"], "html"
+    elif target_clean == "md":
+        md_str = df.to_markdown(index=False) if hasattr(df, "to_markdown") else df.to_string(index=False)
+        return md_str.encode("utf-8"), DOC_MIME_TYPES["md"], "md"
+    elif target_clean == "txt":
+        txt_str = df.to_string(index=False)
+        return txt_str.encode("utf-8"), DOC_MIME_TYPES["txt"], "txt"
+    else:
+        df.to_csv(out_buffer, index=False)
+        return out_buffer.getvalue(), DOC_MIME_TYPES["csv"], "csv"
+
+
+def _convert_ipynb(input_bytes: bytes, target_clean: str) -> Tuple[bytes, str, str]:
+    """Converts Jupyter Notebook (.ipynb) to PY, MD, HTML, TXT, or PDF."""
+    try:
+        data = json.loads(input_bytes.decode("utf-8"))
+    except Exception as e:
+        raise ValueError(f"Invalid .ipynb notebook JSON payload: {e}")
+
+    cells = data.get("cells", [])
+    py_lines = []
+    md_lines = []
+    html_parts = []
+
+    for cell in cells:
+        cell_type = cell.get("cell_type", "")
+        source = "".join(cell.get("source", []))
+
+        if cell_type == "code":
+            py_lines.append(source)
+            md_lines.append(f"```python\n{source}\n```")
+            html_parts.append(f"<pre style='background:#f4f4f4;padding:10px;'><code>{source}</code></pre>")
+        elif cell_type == "markdown":
+            commented = "\n".join(f"# {line}" for line in source.split("\n"))
+            py_lines.append(commented)
+            md_lines.append(source)
+            html_parts.append(f"<div>{markdown.markdown(source)}</div>")
+
+    full_py = "\n\n# --- Cell ---\n\n".join(py_lines)
+    full_md = "\n\n".join(md_lines)
+    full_html = f"<!DOCTYPE html><html><body>{''.join(html_parts)}</body></html>"
+
+    if target_clean == "py":
+        return full_py.encode("utf-8"), DOC_MIME_TYPES["py"], "py"
+    elif target_clean == "html":
+        return full_html.encode("utf-8"), DOC_MIME_TYPES["html"], "html"
+    elif target_clean == "pdf":
+        return _render_text_to_pdf(full_md, "md"), DOC_MIME_TYPES["pdf"], "pdf"
+    elif target_clean == "docx":
+        return _render_text_to_docx(full_md), DOC_MIME_TYPES["docx"], "docx"
+    elif target_clean == "txt":
+        return full_py.encode("utf-8"), DOC_MIME_TYPES["txt"], "txt"
+    else:
+        return full_md.encode("utf-8"), DOC_MIME_TYPES["md"], "md"
+
+
+def _render_text_to_pdf(text: str, src_format: str = "txt") -> bytes:
+    """Renders text string to PDF document using ReportLab."""
+    buffer = io.BytesIO()
+    doc = SimpleDocTemplate(buffer, pagesize=letter, rightMargin=36, leftMargin=36, topMargin=36, bottomMargin=36)
+    styles = getSampleStyleSheet()
+    normal_style = styles["Normal"]
+
+    story = []
+    lines = text.split("\n")
+    for line in lines:
+        cleaned_line = line.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;").strip()
+        if cleaned_line:
+            p = Paragraph(cleaned_line, normal_style)
+            story.append(p)
+        else:
+            story.append(Spacer(1, 10))
+
+    if not story:
+        story.append(Paragraph("Empty Document", normal_style))
+
+    doc.build(story)
+    return buffer.getvalue()
+
+
+def _render_text_to_docx(text: str) -> bytes:
+    """Renders text string to DOCX document using python-docx."""
+    doc = Document()
+    lines = text.split("\n")
+    for line in lines:
+        if line.strip():
+            doc.add_paragraph(line)
+    
+    buffer = io.BytesIO()
+    doc.save(buffer)
+    return buffer.getvalue()

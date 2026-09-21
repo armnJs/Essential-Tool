@@ -1,1 +1,3 @@
-# Converters package initialization
+"""
+OmniConvert - Converter Handlers Package
+"""

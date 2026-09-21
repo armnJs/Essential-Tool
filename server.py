@@ -1,79 +1,97 @@
-# OmniConvert Universal File Converter Engine
-# Author: Armaan | Project: OmniConvert
-# OmniConvert Header Watermark ﻿​‌​​‌‌‌‌‍​‌​‌​‌‌‌‍​‌​​‌‌‌​‍​‌​​​‌​‌‍​‌​‌​​‌​‍​​‌‌‌​‌​‍​​‌​​​​​‍​‌​​​​​‌‍​‌‌‌​​‌​‍​‌‌​‌‌​‌‍​‌‌​​​​‌‍​‌‌​​​​‌‍​‌‌​‌‌‌​‍​​‌​​​​​‍​‌‌‌‌‌​​‍​​‌​​​​​‍​‌​‌​​​​‍​‌​‌​​‌​‍​‌​​‌‌‌‌‍​‌​​‌​‌​‍​‌​​​‌​‌‍​‌​​​​‌‌‍​‌​‌​‌​​‍​​‌‌‌​‌​‍​​‌​​​​​‍​‌​​‌‌‌‌‍​‌‌​‌‌​‌‍​‌‌​‌‌‌​‍​‌‌​‌​​‌‍​‌​​​​‌‌‍​‌‌​‌‌‌‌‍​‌‌​‌‌‌​‍​‌‌‌​‌‌​‍​‌‌​​‌​‌‍​‌‌‌​​‌​‍​‌‌‌​‌​​‍​​‌​​​​​‍​‌‌‌‌‌​​‍​​‌​​​​​‍​‌​‌​​‌‌‍​‌​​‌​​‌‍​‌​​​‌‌‌‍​‌​​‌‌‌​‍​‌​​​​​‌‍​‌​‌​‌​​‍​‌​‌​‌​‌‍​‌​‌​​‌​‍​‌​​​‌​‌‍​​‌‌‌​‌​‍​​‌​​​​​‍​​‌‌​​​​‍​‌‌‌‌​​​‍​​‌‌‌​​‌‍​‌​​​‌‌​‍​​‌‌‌​​​‍​‌​​​​‌​‍​​‌‌​‌​​‍​‌​​​​​‌‍​​‌‌​​‌​‍​‌​​​​‌‌‍​​‌‌​​​‌‍​‌​​​‌​​‍​​‌‌​​‌‌‍​‌​​​‌​‌‍​​‌‌​‌‌‌‍​‌​​​‌‌​‍​​‌‌​‌‌​‍​‌​​​​​‌﻿
-# OmniConvert Universal File Converter Engine
-# Author: Armaan | Project: OmniConvert
-# ﻿​​‌​‌‌‌‌﻿​​‌​‌​​﻿​​‌​‌​‌﻿​​‌‌​​​﻿​​‌​​​​﻿​​‌‌​‌​﻿​​‌​‌​‌﻿​​‌​‌​‌﻿​​‌‌​‌​﻿​​‌​‌‌​﻿​​‌​‌​‌﻿​​‌​​‌‌﻿​​‌​​‌‌﻿​​‌​‌‌​﻿​​‌​‌​​﻿​​‌​‌‌​﻿​​‌​​‌‌﻿​​‌​‌​‌﻿​​‌​​‌​﻿​​‌​‌​​﻿​​‌​‌‌​﻿​​‌​​‌​﻿​​‌​‌‌‌﻿​​‌​​‌‌﻿​​‌​​‌​﻿​​‌​‌​​﻿​​‌​‌‌​﻿​​‌​​‌‌﻿​​‌​‌​‌﻿​​‌​​‌​﻿​​‌​‌​​﻿​​‌​‌‌​﻿​​‌​​‌​﻿​​‌​‌‌‌﻿​​‌​​‌‌﻿​​‌​​‌​﻿​​‌​‌​​﻿​​‌​‌‌​﻿​​‌​​‌‌﻿​​‌​‌​‌﻿​​‌​​‌​﻿​​‌​‌​​﻿​​‌​‌‌​﻿​​‌​​‌​﻿​​‌​‌‌‌﻿​​‌​​‌‌﻿​​‌​​‌​﻿​​‌​‌​​﻿​​‌​‌‌​﻿​​‌​​‌‌﻿​​‌​‌​‌﻿​​‌​​‌​﻿​​‌​‌​​﻿​​‌​‌‌​﻿​​‌​​‌​﻿​​‌​‌‌‌﻿​​‌​​‌‌﻿​​‌​​‌​﻿​​‌​‌​​﻿​​‌​‌‌​﻿​​‌​​‌‌﻿​​‌​‌​‌﻿​​‌​​‌​﻿​​‌​‌​​﻿​​‌​‌‌​﻿​​‌​​‌​﻿​​‌​‌‌‌﻿​​‌​​‌‌﻿​​‌​​‌​﻿​​‌​‌​​﻿​​‌​‌‌​﻿​​‌​​‌‌﻿​​‌​‌​‌﻿​​‌​​‌​﻿​​‌​‌​​﻿​​‌​‌‌​﻿​​‌​​‌​﻿​​‌​‌‌‌﻿​​‌​​‌‌﻿​​‌​​‌​﻿​​‌​‌​​﻿​​‌​‌‌​﻿​​‌​​‌‌﻿​​‌​‌​‌﻿​​‌​​‌​﻿​​‌​‌​​﻿​​‌​‌‌​﻿​​‌​​‌​﻿​​‌​‌‌‌﻿​​‌​​‌‌﻿​​‌​​‌​﻿​​‌​‌​​﻿​​‌​‌‌​﻿​​‌​​‌‌﻿​​‌​‌​‌﻿​​‌​​‌​﻿​​‌​‌​​﻿​​‌​‌‌​﻿​​‌​​‌​﻿​​‌​‌‌‌﻿​​‌​​‌‌﻿​​‌​​‌​﻿​​‌​‌​​﻿​​‌​‌‌​﻿​​‌​​‌‌﻿​​‌​‌​‌﻿​​‌​​‌​﻿​​‌​‌​​﻿​​‌​‌‌​﻿​​‌​​‌​﻿​​‌​‌‌‌﻿​​‌​​‌‌﻿​​‌​​‌​﻿​​‌​‌​​﻿​​‌​‌‌​﻿​​‌​​‌‌﻿​​‌​‌​‌﻿​​‌​​‌​﻿​​‌​‌​​﻿​​‌​‌‌​﻿​​‌​​‌​﻿​​‌​‌‌‌﻿​​‌​​‌‌﻿​​‌​​‌​﻿​​‌​‌​​﻿​​‌​‌‌​﻿​​‌​​‌‌﻿​​‌​‌​‌﻿​​‌​​‌​﻿​​‌​‌​​﻿​​‌​‌‌​﻿​​‌​​‌​﻿​​‌​‌‌‌﻿​​‌​​‌‌﻿​​‌​​‌​﻿​​‌​‌​​﻿​​‌​‌‌​﻿​​‌​​‌‌﻿​​‌​‌​‌﻿​​‌​​‌​﻿​​‌​‌​​﻿​​‌​‌‌​﻿​​‌​​‌​﻿​​‌​‌‌‌﻿​​‌​​‌‌﻿
-
-import io
 import os
-import re
 import json
-import uvicorn
-from fastapi import FastAPI, File, UploadFile, Form, HTTPException, Request
-from fastapi.responses import HTMLResponse, StreamingResponse, JSONResponse, FileResponse
+import io
+import urllib.parse
+from fastapi import FastAPI, UploadFile, File, Form, HTTPException, Request, Response
+from fastapi.responses import StreamingResponse, FileResponse, HTMLResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
+import uvicorn
 
-from converters.registry import FORMAT_CATALOG, CONVERSION_TARGETS, get_allowed_targets, process_conversion
-from converters.watermark import get_provenance_info, text_to_zerowidth, PROVENANCE_PAYLOAD
+from converters.registry import get_allowed_targets, process_conversion
+from converters.watermark import get_provenance_info, OWNER_NAME, encode_zero_width_watermark
 
-app = FastAPI(title="OmniConvert - Universal File Converter API", version="1.0.0")
+app = FastAPI(
+    title="OmniConvert Engine",
+    description="Universal, local self-hosted file conversion web application",
+    version="2.0.0"
+)
 
-# Enable CORS for local/dev usage
+# CORS middleware with custom Provenance header
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
-    allow_credentials=False,
+    allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# Middleware for security, no-cache headers, and steganographic provenance
+# Add custom Provenance Header middleware
 @app.middleware("http")
-async def add_security_headers(request: Request, call_next):
+async def add_provenance_header(request: Request, call_next):
     response = await call_next(request)
-    response.headers["X-Content-Type-Options"] = "nosniff"
-    response.headers["X-Frame-Options"] = "SAMEORIGIN"
-    response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
-    response.headers["Pragma"] = "no-cache"
-    response.headers["Expires"] = "0"
-    response.headers["X-OmniConvert-Provenance"] = f"OmniConvert ({PROVENANCE_PAYLOAD.split('|')[0].split(':')[1].strip()})"
+    response.headers["X-OmniConvert-Provenance"] = OWNER_NAME
     return response
 
-# Ensure static directory exists
-STATIC_DIR = os.path.join(os.path.dirname(__file__), "static")
-if not os.path.exists(STATIC_DIR):
-    os.makedirs(STATIC_DIR, exist_ok=True)
+# Static & Docs directory setup
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+STATIC_DIR = os.path.join(BASE_DIR, "static")
+DOCS_DIR = os.path.join(BASE_DIR, "docs")
+os.makedirs(STATIC_DIR, exist_ok=True)
+os.makedirs(DOCS_DIR, exist_ok=True)
 
-# Mount static assets
 app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
+app.mount("/docs", StaticFiles(directory=DOCS_DIR), name="docs")
+
+# Unlimited local file processing (no file size restrictions for local server)
 
 
-@app.get("/api/health")
-def health_check():
-    return {"status": "ok", "app": "OmniConvert Universal File Converter", "version": "1.0.0", "author": "Armaan"}
+@app.get("/", response_class=HTMLResponse)
+async def serve_index():
+    """Serves the main single-page application frontend."""
+    index_path = os.path.join(STATIC_DIR, "index.html")
+    if os.path.exists(index_path):
+        return FileResponse(index_path)
+    return HTMLResponse("<h1>OmniConvert Server Running</h1><p>static/index.html not found.</p>")
+
+
+@app.get("/favicon.ico")
+@app.get("/static/favicon.ico")
+async def get_favicon():
+    """Serves custom website favicon ico."""
+    favicon_path = os.path.join(STATIC_DIR, "favicon.ico")
+    if os.path.exists(favicon_path):
+        return FileResponse(favicon_path, media_type="image/x-icon")
+    return Response(status_code=204)
 
 
 @app.get("/api/provenance")
-def get_provenance():
-    """Return cryptographic ownership and steganographic provenance information."""
+async def get_provenance():
+    """Returns cryptographic provenance metadata verifying authorship."""
     return get_provenance_info()
 
 
-@app.get("/api/formats")
-def get_formats(src: str = None):
-    """Return format catalog and allowed target conversions for src extension."""
-    if src:
-        clean_src = src.lower().lstrip(".").strip()
-        targets = get_allowed_targets(clean_src)
-        return {
-            "source": clean_src,
-            "allowed_targets": targets
-        }
+@app.get("/api/health")
+async def health_check():
+    """Health status check endpoint."""
     return {
-        "catalog": FORMAT_CATALOG,
-        "matrix": CONVERSION_TARGETS
+        "status": "ok",
+        "app": "OmniConvert Universal Converter Engine",
+        "author": OWNER_NAME,
+        "version": "2.0.0",
+        "supported_engines": ["image", "document", "data", "audio_tts", "archive"]
+    }
+
+
+
+@app.get("/api/formats")
+async def get_formats(src: str = "txt"):
+    """Returns allowed target conversion formats for a given source extension."""
+    clean_src = src.lower().strip().replace(".", "")
+    allowed = get_allowed_targets(clean_src)
+    return {
+        "src_format": clean_src,
+        "allowed_targets": allowed
     }
 
 
@@ -84,102 +102,71 @@ async def convert_file(
     options: str = Form(default="{}")
 ):
     """
-    Endpoint to process file conversion.
-    Accepts file, target format string (e.g., 'pdf', 'png', 'json'), and optional JSON options string.
+    Primary conversion endpoint.
+    Receives file binary payload, target_format, and options JSON string.
+    Returns binary file stream as attachment.
     """
-    try:
-        # Sanitize target_format parameter to prevent path traversal
-        clean_target = target_format.lower().lstrip(".").strip()
-        clean_target = re.sub(r'[^a-zA-Z0-9]', '', clean_target)
-        if not clean_target:
-            raise HTTPException(status_code=400, detail="Invalid target format specified.")
+    if not file or not file.filename:
+        raise HTTPException(status_code=400, detail="No file payload provided in request.")
 
-        input_bytes = await file.read()
-        if not input_bytes or len(input_bytes) == 0:
-            raise HTTPException(status_code=400, detail="Uploaded file is empty.")
+    target_clean = target_format.lower().strip().replace(".", "")
+    if not target_clean:
+        raise HTTPException(status_code=400, detail="Missing target_format parameter.")
 
-        # Check maximum file size (20 MB limit guard)
-        if len(input_bytes) > 20 * 1024 * 1024:
-            raise HTTPException(status_code=413, detail="File size exceeds maximum allowed limit (20MB).")
-
+    # Parse options JSON string
+    options_dict = {}
+    if options:
         try:
-            opts = json.loads(options) if options else {}
-            if not isinstance(opts, dict):
-                opts = {}
+            options_dict = json.loads(options)
         except Exception:
-            opts = {}
+            options_dict = {}
 
-        # Sanitize incoming filename while preserving unicode characters
-        raw_filename = file.filename or "file"
-        safe_filename = os.path.basename(raw_filename.replace("\x00", ""))
+    # Read binary payload
+    try:
+        input_bytes = await file.read()
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f"Failed to read upload file stream: {e}")
 
-        output_bytes, mime_type, out_filename = process_conversion(
+    if len(input_bytes) == 0:
+        raise HTTPException(status_code=400, detail="Uploaded file is empty (0 bytes).")
+
+    # Execute conversion dispatcher
+    try:
+        out_bytes, mime_type, out_filename = process_conversion(
             input_bytes=input_bytes,
-            filename=safe_filename,
-            target_ext=clean_target,
-            options=opts
+            filename=file.filename,
+            target_format=target_clean,
+            options=options_dict
         )
-
-        # Sanitize output filename for Content-Disposition header (RFC 5987 compliant)
-        from urllib.parse import quote
-        raw_out_name = os.path.basename(re.sub(r'[\r\n\x00"<>:;]', '_', out_filename))
-        ascii_name = raw_out_name.encode('ascii', 'ignore').decode('ascii').strip()
-        if not ascii_name or ascii_name.startswith('.'):
-            ascii_name = f"converted_file.{clean_target}"
-        encoded_utf8_name = quote(raw_out_name)
-
-        return StreamingResponse(
-            io.BytesIO(output_bytes),
-            media_type=mime_type,
-            headers={
-                "Content-Disposition": f'attachment; filename="{ascii_name}"; filename*=UTF-8\'\'{encoded_utf8_name}',
-                "Access-Control-Expose-Headers": "Content-Disposition"
-            }
-        )
-
-    except HTTPException:
-        raise
     except ValueError as ve:
         raise HTTPException(status_code=400, detail=str(ve))
     except Exception as e:
-        raise HTTPException(status_code=400, detail=f"Conversion error: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Internal conversion engine error: {e}")
+
+    # Encode output filename for RFC 5987 compliance in Content-Disposition header
+    encoded_filename = urllib.parse.quote(out_filename)
+
+    return StreamingResponse(
+        io.BytesIO(out_bytes),
+        media_type=mime_type,
+        headers={
+            "Content-Disposition": f"attachment; filename*=UTF-8''{encoded_filename}",
+            "Access-Control-Expose-Headers": "Content-Disposition"
+        }
+    )
 
 
-@app.get("/", response_class=HTMLResponse)
-def index_page():
-    index_path = os.path.join(STATIC_DIR, "index.html")
-    if os.path.exists(index_path):
-        return FileResponse(index_path)
-    return HTMLResponse("<h1>OmniConvert Server Running</h1>")
-
-
-@app.get("/neumorphism", response_class=HTMLResponse)
-def neumorphism_page():
-    path_neu = os.path.join(STATIC_DIR, "neumorphism.html")
-    if os.path.exists(path_neu):
-        return FileResponse(path_neu)
-    return HTMLResponse("<h1>Neumorphic Showcase</h1>")
-
-
-@app.get("/404", response_class=HTMLResponse)
-def page_not_found_explicit():
-    path_404 = os.path.join(STATIC_DIR, "404.html")
-    if os.path.exists(path_404):
-        return FileResponse(path_404, status_code=404)
-    return HTMLResponse("<h1>404 - Page Not Found</h1>", status_code=404)
-
-
-# Custom 404 handler for all non-matching frontend routes
 @app.exception_handler(404)
-async def custom_404_handler(request: Request, exc):
+async def custom_404_handler(request: Request, exc: Exception):
+    """Custom 404 page for web requests and JSON error for API requests."""
     if request.url.path.startswith("/api/"):
         return JSONResponse(status_code=404, content={"error": "API route not found"})
-    path_404 = os.path.join(STATIC_DIR, "404.html")
-    if os.path.exists(path_404):
-        return FileResponse(path_404, status_code=404)
+    
+    page_404 = os.path.join(STATIC_DIR, "404.html")
+    if os.path.exists(page_404):
+        return FileResponse(page_404, status_code=404)
     return HTMLResponse("<h1>404 - Page Not Found</h1>", status_code=404)
 
 
 if __name__ == "__main__":
     uvicorn.run("server:app", host="127.0.0.1", port=8000, reload=True)
-
