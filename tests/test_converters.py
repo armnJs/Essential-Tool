@@ -1,10 +1,16 @@
+import sys
 import io
 import json
 import unittest
+from pathlib import Path
+
+# Add project root to sys.path
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+
 from PIL import Image
 from fastapi.testclient import TestClient
-
 from server import app
+
 from converters.image_converter import convert_image
 from converters.doc_converter import convert_document
 from converters.data_converter import convert_data
