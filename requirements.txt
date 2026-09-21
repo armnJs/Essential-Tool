@@ -1,6 +1,7 @@
 fastapi>=0.100.0
 uvicorn>=0.22.0
 gunicorn>=21.2.0
+mangum>=0.17.0
 python-multipart>=0.0.6
 Pillow>=9.5.0
 pypdf>=3.9.0
