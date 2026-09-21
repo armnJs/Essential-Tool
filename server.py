@@ -158,8 +158,11 @@ async def convert_file(
     )
 
 
-# Ensure static directory exists relative to server.py file
-STATIC_DIR = str(Path(__file__).resolve().parent / "static")
+# Ensure static directory exists relative to server.py or current working directory
+base_dir = Path(__file__).resolve().parent
+STATIC_DIR = str(base_dir / "static")
+if not os.path.exists(STATIC_DIR):
+    STATIC_DIR = os.path.join(os.getcwd(), "static")
 if not os.path.exists(STATIC_DIR):
     os.makedirs(STATIC_DIR, exist_ok=True)
 
@@ -173,6 +176,7 @@ def index_page():
     index_file = os.path.join(STATIC_DIR, "index.html")
     if os.path.exists(index_file):
         return FileResponse(index_file)
+
     return HTMLResponse("<h1>OmniConvert Server Running</h1>")
 
 
