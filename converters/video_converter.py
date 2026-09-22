@@ -3,7 +3,10 @@ import os
 import tempfile
 import re
 from typing import Dict, Any, Tuple
-import cv2
+try:
+    import cv2
+except ImportError:
+    cv2 = None
 from PIL import Image
 
 VIDEO_MIME_TYPES = {
@@ -41,6 +44,14 @@ def convert_video(
     target_clean = target_ext.lower().strip().replace(".", "")
     if target_clean not in VIDEO_MIME_TYPES:
         target_clean = "mp4"
+
+    # Route Audio extraction (MP3 / WAV) to Audio Converter engine
+    if target_clean in ["mp3", "wav"]:
+        from converters.audio_converter import convert_audio_or_tts
+        return convert_audio_or_tts(input_bytes, src_ext, target_clean, options)
+
+    if cv2 is None:
+        raise ValueError("Video conversion requires 'opencv-python' module to be installed.")
 
     # Create temporary files for OpenCV VideoCapture and VideoWriter
     with tempfile.NamedTemporaryFile(delete=False, suffix=f".{src_ext}") as in_tmp:
