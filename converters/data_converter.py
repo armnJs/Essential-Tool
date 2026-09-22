@@ -1,12 +1,17 @@
 import io
 import json
+import csv
 import base64
 import plistlib
 import configparser
 import xml.etree.ElementTree as ET
 from typing import Dict, Any, Tuple, List, Union
 import yaml
-import pandas as pd
+
+try:
+    import pandas as pd
+except ImportError:
+    pd = None
 
 DATA_MIME_TYPES = {
     "json": "application/json",
@@ -68,36 +73,35 @@ def convert_data(
             raise ValueError(f"Failed to decode base64 input: {e}")
 
     # Step 1: Parse input bytes into Python Data Structure (dict or list of dicts)
-    data_obj, df = _parse_input_data(input_bytes, src_clean)
+    data_obj = _parse_input_data(input_bytes, src_clean)
 
     # Step 2: Render target format
     table_name = str(options.get("table_name", "data_table")).strip() or "data_table"
 
     if target_clean == "plist":
-        # Apple Property List Format (.plist)
         plist_bytes = _to_plist_bytes(data_obj)
         return plist_bytes, DATA_MIME_TYPES["plist"], "plist"
     elif target_clean == "vcf":
-        # vCard Contacts Format (.vcf)
-        vcf_str = _to_vcard_str(df if df is not None else _to_dataframe(data_obj))
+        vcf_str = _to_vcard_str(data_obj)
         return vcf_str.encode("utf-8"), DATA_MIME_TYPES["vcf"], "vcf"
     elif target_clean == "toml":
         toml_str = _to_toml_str(data_obj)
         return toml_str.encode("utf-8"), DATA_MIME_TYPES["toml"], "toml"
     elif target_clean == "ndjson":
-        if df is None:
-            df = _to_dataframe(data_obj)
-        ndjson_str = df.to_json(orient="records", lines=True)
+        ndjson_str = _to_ndjson_str(data_obj)
         return ndjson_str.encode("utf-8"), DATA_MIME_TYPES["ndjson"], "ndjson"
     elif target_clean == "ini":
         ini_str = _to_ini_str(data_obj)
         return ini_str.encode("utf-8"), DATA_MIME_TYPES["ini"], "ini"
     elif target_clean == "parquet":
-        if df is None:
-            df = _to_dataframe(data_obj)
-        out_buf = io.BytesIO()
-        df.to_parquet(out_buf, index=False)
-        return out_buf.getvalue(), DATA_MIME_TYPES["parquet"], "parquet"
+        if pd is not None:
+            records = data_obj if isinstance(data_obj, list) else [data_obj]
+            df = pd.DataFrame(records)
+            out_buf = io.BytesIO()
+            df.to_parquet(out_buf, index=False)
+            return out_buf.getvalue(), DATA_MIME_TYPES["parquet"], "parquet"
+        else:
+            raise ValueError("Parquet conversion requires pandas package.")
     elif target_clean == "json":
         out_str = json.dumps(data_obj, indent=2, ensure_ascii=False)
         return out_str.encode("utf-8"), DATA_MIME_TYPES["json"], "json"
@@ -105,21 +109,13 @@ def convert_data(
         out_str = yaml.safe_dump(data_obj, sort_keys=False)
         return out_str.encode("utf-8"), DATA_MIME_TYPES["yaml"], "yaml"
     elif target_clean == "csv":
-        if df is None:
-            df = _to_dataframe(data_obj)
-        out_buf = io.StringIO()
-        df.to_csv(out_buf, index=False)
-        return out_buf.getvalue().encode("utf-8"), DATA_MIME_TYPES["csv"], "csv"
+        csv_bytes = _to_delimited_bytes(data_obj, sep=",")
+        return csv_bytes, DATA_MIME_TYPES["csv"], "csv"
     elif target_clean == "tsv":
-        if df is None:
-            df = _to_dataframe(data_obj)
-        out_buf = io.StringIO()
-        df.to_csv(out_buf, sep="\t", index=False)
-        return out_buf.getvalue().encode("utf-8"), DATA_MIME_TYPES["tsv"], "tsv"
+        tsv_bytes = _to_delimited_bytes(data_obj, sep="\t")
+        return tsv_bytes, DATA_MIME_TYPES["tsv"], "tsv"
     elif target_clean == "sql":
-        if df is None:
-            df = _to_dataframe(data_obj)
-        sql_str = _generate_sql_inserts(df, table_name)
+        sql_str = _generate_sql_inserts(data_obj, table_name)
         return sql_str.encode("utf-8"), DATA_MIME_TYPES["sql"], "sql"
     elif target_clean == "xml":
         xml_bytes = _to_xml_bytes(data_obj)
@@ -131,27 +127,27 @@ def convert_data(
 
 # --- Helper Functions ---
 
-def _parse_input_data(input_bytes: bytes, src_clean: str) -> Tuple[Union[Dict, List], Any]:
-    """Parses payload into Python object and DataFrame."""
+def _parse_input_data(input_bytes: bytes, src_clean: str) -> Union[Dict, List]:
+    """Parses payload into Python object (dict or list of dicts) without requiring pandas."""
     if src_clean == "plist":
         try:
-            obj = plistlib.loads(input_bytes)
-            return obj, _to_dataframe(obj)
+            return plistlib.loads(input_bytes)
         except Exception as e:
             raise ValueError(f"Failed to parse Apple PLIST payload: {e}")
 
     if src_clean == "parquet":
-        try:
-            df = pd.read_parquet(io.BytesIO(input_bytes))
-            obj = df.to_dict(orient="records")
-            return obj, df
-        except Exception as e:
-            raise ValueError(f"Failed to parse Parquet payload: {e}")
+        if pd is not None:
+            try:
+                df = pd.read_parquet(io.BytesIO(input_bytes))
+                return df.to_dict(orient="records")
+            except Exception as e:
+                raise ValueError(f"Failed to parse Parquet payload: {e}")
+        else:
+            raise ValueError("Parquet reading requires pandas package.")
 
     raw_text = input_bytes.decode("utf-8", errors="ignore").strip()
 
     if src_clean == "vcf":
-        # Parse vCard contacts
         records = []
         current = {}
         for line in raw_text.splitlines():
@@ -164,31 +160,21 @@ def _parse_input_data(input_bytes: bytes, src_clean: str) -> Tuple[Union[Dict, L
                 key, val = line.split(":", 1)
                 clean_key = key.split(";")[0].lower()
                 current[clean_key] = val.strip()
-        df = pd.DataFrame(records if records else [{"contact": raw_text}])
-        return records, df
+        return records if records else [{"contact": raw_text}]
     elif src_clean == "ndjson":
-        records = [json.loads(line) for line in raw_text.splitlines() if line.strip()]
-        df = pd.DataFrame(records)
-        return records, df
+        return [json.loads(line) for line in raw_text.splitlines() if line.strip()]
     elif src_clean == "ini":
         config = configparser.ConfigParser()
         config.read_string(raw_text)
-        obj = {section: dict(config[section]) for section in config.sections()}
-        df = pd.DataFrame(obj)
-        return obj, df
+        return {section: dict(config[section]) for section in config.sections()}
     elif src_clean == "json":
-        obj = json.loads(raw_text)
-        df = _to_dataframe(obj)
-        return obj, df
+        return json.loads(raw_text)
     elif src_clean == "yaml":
-        obj = yaml.safe_load(raw_text)
-        df = _to_dataframe(obj)
-        return obj, df
+        return yaml.safe_load(raw_text)
     elif src_clean in ["csv", "tsv"]:
         sep = "\t" if src_clean == "tsv" else ","
-        df = pd.read_csv(io.StringIO(raw_text), sep=sep)
-        obj = df.to_dict(orient="records")
-        return obj, df
+        reader = csv.DictReader(io.StringIO(raw_text), delimiter=sep)
+        return [dict(row) for row in reader]
     elif src_clean == "xml":
         root = ET.fromstring(raw_text)
         records = []
@@ -198,23 +184,46 @@ def _parse_input_data(input_bytes: bytes, src_clean: str) -> Tuple[Union[Dict, L
                 records.append(row)
         if not records:
             records = [{root.tag: root.text}]
-        df = pd.DataFrame(records)
-        return records, df
+        return records
     else:
         try:
-            obj = json.loads(raw_text)
-            return obj, _to_dataframe(obj)
+            return json.loads(raw_text)
         except Exception:
-            return {"raw_content": raw_text}, pd.DataFrame([{"raw_content": raw_text}])
+            return {"raw_content": raw_text}
 
 
-def _to_dataframe(data_obj: Union[Dict, List]) -> pd.DataFrame:
-    """Safely converts dict or list to pandas DataFrame."""
-    if isinstance(data_obj, list):
-        return pd.DataFrame(data_obj)
-    elif isinstance(data_obj, dict):
-        return pd.DataFrame([data_obj])
-    return pd.DataFrame([{"value": str(data_obj)}])
+def _to_delimited_bytes(data_obj: Union[Dict, List], sep: str = ",") -> bytes:
+    """Converts dict or list of dicts to CSV/TSV bytes cleanly using standard library."""
+    records = data_obj if isinstance(data_obj, list) else [data_obj]
+    if not records:
+        return b""
+
+    # Normalize list elements to dicts
+    clean_records = []
+    keys = []
+    for item in records:
+        if isinstance(item, dict):
+            clean_records.append(item)
+            for k in item.keys():
+                if k not in keys:
+                    keys.append(k)
+        else:
+            clean_records.append({"value": str(item)})
+            if "value" not in keys:
+                keys.append("value")
+
+    out_buf = io.StringIO()
+    writer = csv.DictWriter(out_buf, fieldnames=keys, delimiter=sep)
+    writer.writeheader()
+    writer.writerows(clean_records)
+    return out_buf.getvalue().encode("utf-8")
+
+
+def _to_ndjson_str(data_obj: Union[Dict, List]) -> str:
+    """Serializes object to NDJSON (Newline Delimited JSON)."""
+    records = data_obj if isinstance(data_obj, list) else [data_obj]
+    lines = [json.dumps(row, ensure_ascii=False) for row in records]
+    return "\n".join(lines)
 
 
 def _to_plist_bytes(data_obj: Union[Dict, List]) -> bytes:
@@ -224,13 +233,19 @@ def _to_plist_bytes(data_obj: Union[Dict, List]) -> bytes:
     return plistlib.dumps(data_obj, fmt=plistlib.FMT_XML)
 
 
-def _to_vcard_str(df: pd.DataFrame) -> str:
-    """Generates vCard .vcf string from DataFrame records."""
+def _to_vcard_str(data_obj: Union[Dict, List]) -> str:
+    """Generates vCard .vcf string from records."""
+    records = data_obj if isinstance(data_obj, list) else [data_obj]
     vcards = []
-    for _, row in df.iterrows():
-        fn = str(row.get("fn", row.get("name", "Contact"))).strip()
-        email = str(row.get("email", "")).strip()
-        tel = str(row.get("tel", row.get("phone", ""))).strip()
+    for item in records:
+        if isinstance(item, dict):
+            fn = str(item.get("fn", item.get("name", "Contact"))).strip()
+            email = str(item.get("email", "")).strip()
+            tel = str(item.get("tel", item.get("phone", ""))).strip()
+        else:
+            fn = str(item)
+            email = ""
+            tel = ""
 
         lines = ["BEGIN:VCARD", "VERSION:3.0", f"FN:{fn}"]
         if email:
@@ -275,16 +290,30 @@ def _to_ini_str(data_obj: Union[Dict, List]) -> str:
     return out.getvalue()
 
 
-def _generate_sql_inserts(df: pd.DataFrame, table_name: str) -> str:
-    """Generates SQL INSERT INTO statements from a DataFrame."""
+def _generate_sql_inserts(data_obj: Union[Dict, List], table_name: str) -> str:
+    """Generates SQL INSERT INTO statements from dict or list of dicts."""
+    records = data_obj if isinstance(data_obj, list) else [data_obj]
+    if not records:
+        return f"-- Empty export for table '{table_name}'"
+
+    columns = []
+    for item in records:
+        if isinstance(item, dict):
+            for k in item.keys():
+                if k not in columns:
+                    columns.append(k)
+        else:
+            if "val" not in columns:
+                columns.append("val")
+
     lines = [f"-- SQL Export generated for table '{table_name}'", ""]
-    columns = list(df.columns)
     cols_str = ", ".join(f"`{c}`" for c in columns)
 
-    for _, row in df.iterrows():
+    for item in records:
         vals = []
-        for val in row:
-            if pd.isna(val):
+        for col in columns:
+            val = item.get(col) if isinstance(item, dict) else item
+            if val is None:
                 vals.append("NULL")
             elif isinstance(val, (int, float)):
                 vals.append(str(val))

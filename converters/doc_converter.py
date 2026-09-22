@@ -3,7 +3,10 @@ import json
 import zipfile
 import xml.etree.ElementTree as ET
 from typing import Dict, Any, Tuple
-import pandas as pd
+try:
+    import pandas as pd
+except ImportError:
+    pd = None
 from pypdf import PdfReader
 from docx import Document
 from reportlab.lib.pagesizes import letter
@@ -205,35 +208,49 @@ def _convert_from_docx(input_bytes: bytes, target_clean: str) -> Tuple[bytes, st
 
 
 def _convert_spreadsheet(input_bytes: bytes, src_clean: str, target_clean: str) -> Tuple[bytes, str, str]:
-    """Converts spreadsheets (XLSX, CSV, TSV) using pandas."""
+    """Converts spreadsheets (XLSX, CSV, TSV) using pandas if available, else pure Python."""
     buffer = io.BytesIO(input_bytes)
-    if src_clean in ["xlsx", "xls"]:
-        df = pd.read_excel(buffer)
-    elif src_clean == "tsv":
-        df = pd.read_csv(buffer, sep="\t")
-    else:
-        df = pd.read_csv(buffer)
+    if pd is not None:
+        if src_clean in ["xlsx", "xls"]:
+            df = pd.read_excel(buffer)
+        elif src_clean == "tsv":
+            df = pd.read_csv(buffer, sep="\t")
+        else:
+            df = pd.read_csv(buffer)
 
-    out_buffer = io.BytesIO()
-    if target_clean == "xlsx":
-        with pd.ExcelWriter(out_buffer, engine="openpyxl") as writer:
-            df.to_excel(writer, index=False)
-        return out_buffer.getvalue(), DOC_MIME_TYPES["xlsx"], "xlsx"
-    elif target_clean == "tsv":
-        df.to_csv(out_buffer, sep="\t", index=False)
-        return out_buffer.getvalue(), DOC_MIME_TYPES["tsv"], "tsv"
-    elif target_clean == "html":
-        html_str = df.to_html(index=False, classes="table table-striped")
-        return html_str.encode("utf-8"), DOC_MIME_TYPES["html"], "html"
-    elif target_clean == "md":
-        md_str = df.to_markdown(index=False) if hasattr(df, "to_markdown") else df.to_string(index=False)
-        return md_str.encode("utf-8"), DOC_MIME_TYPES["md"], "md"
-    elif target_clean == "txt":
-        txt_str = df.to_string(index=False)
-        return txt_str.encode("utf-8"), DOC_MIME_TYPES["txt"], "txt"
+        out_buffer = io.BytesIO()
+        if target_clean == "xlsx":
+            with pd.ExcelWriter(out_buffer, engine="openpyxl") as writer:
+                df.to_excel(writer, index=False)
+            return out_buffer.getvalue(), DOC_MIME_TYPES["xlsx"], "xlsx"
+        elif target_clean == "tsv":
+            df.to_csv(out_buffer, sep="\t", index=False)
+            return out_buffer.getvalue(), DOC_MIME_TYPES["tsv"], "tsv"
+        elif target_clean == "html":
+            html_str = df.to_html(index=False, classes="table table-striped")
+            return html_str.encode("utf-8"), DOC_MIME_TYPES["html"], "html"
+        elif target_clean == "md":
+            md_str = df.to_markdown(index=False) if hasattr(df, "to_markdown") else df.to_string(index=False)
+            return md_str.encode("utf-8"), DOC_MIME_TYPES["md"], "md"
+        elif target_clean == "txt":
+            txt_str = df.to_string(index=False)
+            return txt_str.encode("utf-8"), DOC_MIME_TYPES["txt"], "txt"
+        else:
+            df.to_csv(out_buffer, index=False)
+            return out_buffer.getvalue(), DOC_MIME_TYPES["csv"], "csv"
     else:
-        df.to_csv(out_buffer, index=False)
-        return out_buffer.getvalue(), DOC_MIME_TYPES["csv"], "csv"
+        # Pure Python fallback for CSV / TSV without pandas
+        import csv
+        raw_text = input_bytes.decode("utf-8", errors="ignore")
+        src_sep = "\t" if src_clean == "tsv" else ","
+        target_sep = "\t" if target_clean == "tsv" else ","
+        reader = list(csv.reader(io.StringIO(raw_text), delimiter=src_sep))
+        out_buf = io.StringIO()
+        writer = csv.writer(out_buf, delimiter=target_sep)
+        writer.writerows(reader)
+        out_bytes = out_buf.getvalue().encode("utf-8")
+        mime = DOC_MIME_TYPES.get(target_clean, "text/csv")
+        return out_bytes, mime, target_clean
 
 
 def _convert_ipynb(input_bytes: bytes, target_clean: str) -> Tuple[bytes, str, str]:

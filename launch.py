@@ -46,10 +46,10 @@ def ensure_environment():
         print(f"📦 Creating virtual environment in {VENV_DIR}...")
         subprocess.check_call([sys.executable, "-m", "venv", str(VENV_DIR)])
     
-    # Check if dependencies installed
+    # Check if essential dependencies are installed
     try:
         subprocess.check_call(
-            [str(python_exe), "-c", "import fastapi, uvicorn, PIL, reportlab, pandas"],
+            [str(python_exe), "-c", "import fastapi, uvicorn, PIL, reportlab, pypdf, docx"],
             stdout=subprocess.DEVNULL,
             stderr=subprocess.DEVNULL
         )

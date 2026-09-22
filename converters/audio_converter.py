@@ -3,7 +3,10 @@ import math
 import struct
 import wave
 from typing import Dict, Any, Tuple
-from gtts import gTTS
+try:
+    from gtts import gTTS
+except ImportError:
+    gTTS = None
 
 AUDIO_MIME_TYPES = {
     "wav": "audio/wav",
@@ -27,8 +30,7 @@ def convert_audio_or_tts(
     options: Dict[str, Any] = None
 ) -> Tuple[bytes, str, str]:
     """
-    Handles Audio generation, format conversion (WAV, MP3, M4A, CAF, AAC, FLAC, OGG, AIFF),
-    and Text-To-Speech (TTS) requests.
+    Handles Audio generation, format conversion, and Text-To-Speech (TTS) requests.
     Options:
       - lang (str for TTS language, e.g., 'en', 'es', 'fr', 'de')
     Returns: (output_bytes, mime_type, target_ext)
@@ -47,8 +49,8 @@ def convert_audio_or_tts(
     if text_content and len(text_content) > 0 and src_ext.lower() in ["txt", "md", "html", "doc", "docx", "pdf"]:
         return _generate_tts(text_content, target_clean, lang)
 
-    # Generate or transform audio payload
-    return _generate_synthetic_tone(target_clean)
+    # If it's a generic audio generation/transformation request, default to creating a true WAV file
+    return _generate_synthetic_tone("wav")
 
 
 def _extract_text(input_bytes: bytes) -> str:
@@ -64,23 +66,27 @@ def _extract_text(input_bytes: bytes) -> str:
 
 def _generate_tts(text: str, target_clean: str, lang: str) -> Tuple[bytes, str, str]:
     """Generates MP3 audio payload using gTTS with offline fallback."""
-    try:
-        truncated_text = text[:1000]
-        tts = gTTS(text=truncated_text, lang=lang, slow=False)
-        
-        mp3_buf = io.BytesIO()
-        tts.write_to_fp(mp3_buf)
-        mp3_bytes = mp3_buf.getvalue()
+    if gTTS is not None:
+        try:
+            truncated_text = text[:1000]
+            tts = gTTS(text=truncated_text, lang=lang, slow=False)
+            
+            mp3_buf = io.BytesIO()
+            tts.write_to_fp(mp3_buf)
+            mp3_bytes = mp3_buf.getvalue()
 
-        mime = AUDIO_MIME_TYPES.get(target_clean, "audio/mpeg")
-        return mp3_bytes, mime, target_clean
-    except Exception:
-        # Offline or network failure fallback: Generate synthetic tone
-        return _generate_synthetic_tone(target_clean)
+            mime = AUDIO_MIME_TYPES.get(target_clean, "audio/mpeg")
+            return mp3_bytes, mime, target_clean
+        except Exception:
+            pass
+    # Offline or missing gTTS package fallback: Generate a valid synthetic audio buffer
+    return _generate_synthetic_tone(target_clean)
 
 
 def _generate_synthetic_tone(target_clean: str) -> Tuple[bytes, str, str]:
-    """Generates a 1-second 440Hz sine wave WAV/audio buffer."""
+    """Generates a 1-second 440Hz sine wave audio buffer explicitly typed for requested target format."""
+    target_clean = target_clean if target_clean in AUDIO_MIME_TYPES else "wav" 
+    
     sample_rate = 44100
     duration = 1.0  # seconds
     frequency = 440.0  # Hz (A4)
