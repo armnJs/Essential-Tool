@@ -195,6 +195,6 @@ async def custom_404_handler(request: Request, exc: Exception):
 if __name__ == "__main__":
     host = os.getenv("HOST", "0.0.0.0")
     port = int(os.getenv("PORT", 8000))
-    is_dev = os.getenv("ENVIRONMENT", "development").lower() == "development"
+    is_dev = os.getenv("ENVIRONMENT", "production").lower() == "development"
     uvicorn.run("server:app", host=host, port=port, reload=is_dev)
 
