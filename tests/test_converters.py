@@ -110,6 +110,13 @@ class TestOmniConvertSuite(unittest.TestCase):
         self.assertEqual(ext, "m4a")
         self.assertGreater(len(out_bytes), 0)
 
+    def test_wav_to_ogg_and_audio_targets(self):
+        wav_bytes = b"RIFF....WAVEfmt \x10\x00\x00\x00\x01\x00\x01\x00D\xac\x00\x00\x88X\x01\x00\x02\x00\x10\x00data\x00\x00\x00\x00"
+        out_bytes, mime, out_filename = process_conversion(wav_bytes, "sample.wav", "ogg")
+        self.assertEqual(mime, "audio/ogg")
+        self.assertTrue(out_filename.endswith(".ogg"))
+        self.assertGreater(len(out_bytes), 0)
+
     # ----------------------------------------------------
     # 5. Archive Tests
     # ----------------------------------------------------

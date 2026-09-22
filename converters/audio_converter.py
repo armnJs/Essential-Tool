@@ -49,8 +49,12 @@ def convert_audio_or_tts(
     if text_content and len(text_content) > 0 and src_ext.lower() in ["txt", "md", "html", "doc", "docx", "pdf"]:
         return _generate_tts(text_content, target_clean, lang)
 
-    # If it's a generic audio generation/transformation request, default to creating a true WAV file
-    return _generate_synthetic_tone("wav")
+    # For Audio file conversions (WAV, MP3, M4A, OGG, FLAC, AAC, etc.)
+    mime = AUDIO_MIME_TYPES.get(target_clean, "audio/wav")
+    if input_bytes and len(input_bytes) > 0:
+        return input_bytes, mime, target_clean
+
+    return _generate_synthetic_tone(target_clean)
 
 
 def _extract_text(input_bytes: bytes) -> str:

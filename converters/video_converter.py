@@ -16,9 +16,7 @@ VIDEO_MIME_TYPES = {
     "mkv": "video/x-matroska",
     "avi": "video/x-msvideo",
     "webm": "video/webm",
-    "gif": "image/gif",
-    "mp3": "audio/mpeg",
-    "wav": "audio/wav"
+    "gif": "image/gif"
 }
 
 SUPPORTED_VIDEO_FORMATS = list(VIDEO_MIME_TYPES.keys())
