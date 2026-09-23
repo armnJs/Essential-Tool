@@ -66,24 +66,11 @@ def ensure_environment():
 
     return str(python_exe)
 
-def is_server_running():
-    """Check if server is accepting HTTP connections."""
-    try:
-        with urllib.request.urlopen(f"{SERVER_URL}/api/health", timeout=0.5) as resp:
-            return resp.status == 200
-    except Exception:
-        return False
-
 def open_browser():
-    """Open default web browser immediately after server is alive."""
-    for _ in range(50):  # poll every 100ms up to 5 seconds
-        if is_server_running():
-            print(f"🌐 Opening OmniConvert UI in browser ({SERVER_URL})...")
-            webbrowser.open(SERVER_URL)
-            return True
-        time.sleep(0.1)
+    """Wait for server socket initialization then open browser."""
+    time.sleep(1.0)
+    print(f"🌐 Opening OmniConvert UI in browser ({SERVER_URL})...")
     webbrowser.open(SERVER_URL)
-    return False
 
 def main():
     print("=" * 60)

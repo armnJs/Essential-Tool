@@ -158,28 +158,6 @@ async def convert_file(
     )
 
 
-# Ensure static directory exists relative to server.py or current working directory
-base_dir = Path(__file__).resolve().parent
-STATIC_DIR = str(base_dir / "static")
-if not os.path.exists(STATIC_DIR):
-    STATIC_DIR = os.path.join(os.getcwd(), "static")
-if not os.path.exists(STATIC_DIR):
-    os.makedirs(STATIC_DIR, exist_ok=True)
-
-# Mount static assets
-app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
-
-
-@app.get("/")
-def index_page():
-    """Serves the main SPA index page."""
-    index_file = os.path.join(STATIC_DIR, "index.html")
-    if os.path.exists(index_file):
-        return FileResponse(index_file)
-
-    return HTMLResponse("<h1>OmniConvert Server Running</h1>")
-
-
 @app.exception_handler(404)
 async def custom_404_handler(request: Request, exc: Exception):
     """Custom 404 page for web requests and JSON error for API requests."""
@@ -193,7 +171,7 @@ async def custom_404_handler(request: Request, exc: Exception):
 
 
 if __name__ == "__main__":
-    host = os.getenv("HOST", "0.0.0.0")
+    host = os.getenv("HOST", "127.0.0.1")
     port = int(os.getenv("PORT", 8000))
     is_dev = os.getenv("ENVIRONMENT", "production").lower() == "development"
     uvicorn.run("server:app", host=host, port=port, reload=is_dev)
